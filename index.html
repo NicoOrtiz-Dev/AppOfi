@@ -1,18 +1,17 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Soccer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Incluir el nuevo archivo de configuración de Firebase -->
-    <script type="module" src="./firebase-config.js"></script>
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fake Soccer</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- Incluir el nuevo archivo de configuración de Firebase -->
+<script type="module"></script>
+<style>
         :root {
             --primary-color: #007BFF;
             --secondary-color: #28A745;
@@ -478,174 +477,225 @@
                 display: none;
             }
         }
-    </style>
+    
+
+.form-control { background-color:white; color: var(--text-color); }
+.badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700; }
+.badge.ht { background:#6c757d; color:white; }
+.badge.suspended { background:#dc3545; color:white; }
+.event-item { margin-bottom:6px; }
+.event-time { opacity:0.7; font-size:0.85em; margin-right:6px; }
+.event-player { font-weight:600; }
+.event-type { font-weight:700; }
+.meta { opacity:0.7; font-size:0.85em; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <nav>
-            <button class="nav-btn active" data-section="inicio"><i class="fas fa-home"></i> <span>Inicio</span></button>
-            <button class="nav-btn" data-section="fechas"><i class="fas fa-calendar-alt"></i> <span>Fechas</span></button>
-            <button class="nav-btn" data-section="partidos"><i class="fas fa-trophy"></i> <span>Partidos</span></button>
-            <button class="nav-btn" data-section="admin"><i class="fas fa-user-shield"></i> <span>Admin</span></button>
-        </nav>
-        <main id="app-content">
-            <!-- Sección de Inicio -->
-            <section id="inicio" class="section">
-                <div class="section-header">
-                    <h2>Partidos en Vivo</h2>
-                    <i class="fas fa-futbol" style="font-size: 2em; color: var(--accent-color);"></i>
-                </div>
-                <div id="live-matches-container">
-                    <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
-                </div>
-            </section>
-            <!-- Sección de Fechas -->
-            <section id="fechas" class="section" style="display:none;">
-                <div class="section-header">
-                    <h2>Partidos Agendados</h2>
-                    <i class="fas fa-calendar-plus" style="font-size: 2em; color: var(--accent-color);"></i>
-                </div>
-                <div class="tab-container">
-                    <button class="tab-btn active" data-tab="Fechas">Fechas</button>
-                    <button class="tab-btn" data-tab="Torneos">Torneos</button>
-                    <button class="tab-btn" data-tab="Copa Juvenil">Copa Juvenil</button>
-                </div>
-                <div id="upcoming-matches-container">
-                    <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos agendados...</p>
-                </div>
-            </section>
-            <!-- Sección de Partidos Finalizados -->
-            <section id="partidos" class="section" style="display:none;">
-                <div class="section-header">
-                    <h2>Partidos Finalizados</h2>
-                    <i class="fas fa-check-circle" style="font-size: 2em; color: var(--accent-color);"></i>
-                </div>
-                <div id="finished-matches-container">
-                    <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>
-                </div>
-            </section>
-            <!-- Sección de Admin -->
-            <section id="admin" class="section" style="display:none;">
-                <div id="admin-login" class="login-form">
-                    <h2>Acceso de Administrador</h2>
-                    <input type="password" id="admin-password" placeholder="Contraseña de Admin">
-                    <button id="login-btn" class="btn">Acceder</button>
-                </div>
-                <div id="admin-panel" style="display:none;">
-                    <h2>Panel de Administración</h2>
-                    <div class="form-container">
-                        <h3>Añadir Nuevo Partido</h3>
-                        <div class="form-group">
-                            <label for="team1-name">Nombre del Equipo 1</label>
-                            <input type="text" id="team1-name" placeholder="Ej: Real Madrid">
-                        </div>
-                        <div class="form-group">
-                            <label for="team1-shield">Escudo del Equipo 1 (URL)</label>
-                            <input type="text" id="team1-shield" placeholder="Ej: https://...">
-                        </div>
-                        <div class="form-group">
-                            <label for="team2-name">Nombre del Equipo 2</label>
-                            <input type="text" id="team2-name" placeholder="Ej: Barcelona">
-                        </div>
-                        <div class="form-group">
-                            <label for="team2-shield">Escudo del Equipo 2 (URL)</label>
-                            <input type="text" id="team2-shield" placeholder="Ej: https://...">
-                        </div>
-                        <div class="form-group">
-                            <label for="match-date">Fecha del Partido</label>
-                            <input type="date" id="match-date">
-                        </div>
-                        <div class="form-group">
-                            <label for="match-time">Hora del Partido</label>
-                            <input type="time" id="match-time">
-                        </div>
-                        <div class="form-group">
-                            <label for="match-type">Tipo de Partido</label>
-                            <select id="match-type">
-                                <option value="Fechas">Fechas</option>
-                                <option value="Torneos">Torneos</option>
-                                <option value="Copa Juvenil">Copa Juvenil</option>
-                            </select>
-                        </div>
-                        <button id="add-match-btn" class="btn">Añadir Partido</button>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-    <div id="message-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="message-modal-title"></h3>
-            <p id="message-modal-message"></p>
-            <div class="modal-buttons">
-                <button id="modal-close-btn" class="btn">Cerrar</button>
-            </div>
-        </div>
-    </div>
-    <div id="confirm-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="confirm-modal-title"></h3>
-            <p id="confirm-modal-message"></p>
-            <div class="modal-buttons">
-                <button id="confirm-cancel-btn" class="btn">Cancelar</button>
-                <button id="confirm-ok-btn" class="btn red">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div id="match-control-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="control-modal-title">Control de Partido</h3>
-            <div id="control-match-card" class="live-match-card">
-                <div class="match-header">
-                    <div class="team">
-                        <img id="control-team1-shield" src="" alt="Equipo 1" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
-                        <span id="control-team1-name" class="team-name">Equipo 1</span>
-                    </div>
-                    <div class="score-container">
-                        <span id="control-team1-score">0</span>
+<div class="container">
+<nav>
+<button class="nav-btn active" data-section="inicio"><i class="fas fa-home"></i> <span>Inicio</span></button>
+<button class="nav-btn" data-section="fechas"><i class="fas fa-calendar-alt"></i> <span>Fechas</span></button>
+<button class="nav-btn" data-section="partidos"><i class="fas fa-trophy"></i> <span>Partidos</span></button>
+<button class="nav-btn" data-section="admin"><i class="fas fa-user-shield"></i> <span>Admin</span></button>
+</nav>
+<main id="app-content">
+<!-- Sección de Inicio -->
+<section class="section" id="inicio">
+<div class="section-header">
+<h2>Partidos en Vivo</h2>
+<i class="fas fa-futbol" style="font-size: 2em; color: var(--accent-color);"></i>
+</div>
+<div id="live-matches-container">
+<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
+</div>
+</section>
+<!-- Sección de Fechas -->
+<section class="section" id="fechas" style="display:none;">
+<div class="section-header">
+<h2>Partidos Agendados</h2>
+<i class="fas fa-calendar-plus" style="font-size: 2em; color: var(--accent-color);"></i>
+</div>
+<div class="tab-container">
+<button class="tab-btn active" data-tab="Fechas">Fechas</button>
+<button class="tab-btn" data-tab="Torneos">Torneos</button>
+<button class="tab-btn" data-tab="Copa Juvenil">Copa Juvenil</button>
+</div>
+<div id="upcoming-matches-container">
+<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos agendados...</p>
+</div>
+</section>
+<!-- Sección de Partidos Finalizados -->
+<section class="section" id="partidos" style="display:none;">
+<div class="section-header">
+<h2>Partidos Finalizados</h2>
+<i class="fas fa-check-circle" style="font-size: 2em; color: var(--accent-color);"></i>
+</div>
+<div id="finished-matches-container">
+<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>
+</div>
+</section>
+<!-- Sección de Admin -->
+<section class="section" id="admin" style="display:none;">
+<div class="login-form" id="admin-login">
+<h2>Acceso de Administrador</h2>
+<input id="admin-password" placeholder="Contraseña de Admin" type="password"/>
+<button class="btn" id="login-btn">Acceder</button>
+</div>
+<div id="admin-panel" style="display:none;">
+<h2>Panel de Administración</h2>
+<div class="form-container">
+<h3>Añadir Nuevo Partido</h3>
+<div class="form-group">
+<label for="team1-name">Nombre del Equipo 1</label>
+<input id="team1-name" placeholder="Ej: Real Madrid" type="text"/>
+</div>
+<div class="form-group">
+<label for="team1-shield">Escudo del Equipo 1 (URL)</label>
+<input id="team1-shield" placeholder="Ej: https://..." type="text"/>
+</div>
+<div class="form-group">
+<label for="team2-name">Nombre del Equipo 2</label>
+<input id="team2-name" placeholder="Ej: Barcelona" type="text"/>
+</div>
+<div class="form-group">
+<label for="team2-shield">Escudo del Equipo 2 (URL)</label>
+<input id="team2-shield" placeholder="Ej: https://..." type="text"/>
+</div>
+<div class="form-group">
+<label for="match-date">Fecha del Partido</label>
+<input id="match-date" type="date"/>
+</div>
+<div class="form-group">
+<label for="match-time">Hora del Partido</label>
+<input id="match-time" type="time"/>
+</div><div class="form-group"><label for="match-location">Ubicación</label><input id="match-location" placeholder="Ej: Estadio Atanasio Girardot" type="text"/></div><div class="form-group"><label for="match-competition">Competición</label><input id="match-competition" placeholder="Ej: Liga, Copa, Amistoso" type="text"/></div><div class="form-group"><label for="match-stage">Instancia / Fase</label><select id="match-stage"><option>Partido de Ida</option><option>Partido de Vuelta</option><option>Octavos de Final</option><option>Cuartos de Final</option><option>Semifinal</option><option>Final</option><option>Fase de Grupos</option><option>Amistoso</option></select></div><div class="form-group"><label for="match-aggregate">Marcador global (opcional)</label><input id="match-aggregate" placeholder="ej: 2-1" type="text"/></div>
+<div class="form-group">
+<label for="match-type">Tipo de Partido</label>
+<select id="match-type">
+<option value="Fechas">Fechas</option>
+<option value="Torneos">Torneos</option>
+<option value="Copa Juvenil">Copa Juvenil</option>
+</select>
+</div>
+<button class="btn" id="add-match-btn">Añadir Partido</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<div class="modal-overlay" id="message-modal">
+<div class="modal-content">
+<h3 id="message-modal-title"></h3>
+<p id="message-modal-message"></p>
+<div class="modal-buttons">
+<button class="btn" id="modal-close-btn">Cerrar</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="confirm-modal">
+<div class="modal-content">
+<h3 id="confirm-modal-title"></h3>
+<p id="confirm-modal-message"></p>
+<div class="modal-buttons">
+<button class="btn" id="confirm-cancel-btn">Cancelar</button>
+<button class="btn red" id="confirm-ok-btn">Aceptar</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="match-control-modal">
+<div class="modal-content">
+<h3 id="control-modal-title">Control de Partido</h3>
+<div class="live-match-card" id="control-match-card">
+<div class="match-header">
+<div class="team">
+<img alt="Equipo 1" class="team-shield" id="control-team1-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'" src=""/>
+<span class="team-name" id="control-team1-name">Equipo 1</span>
+</div>
+<div class="score-container">
+<span id="control-team1-score">0</span>
                         -
                         <span id="control-team2-score">0</span>
-                    </div>
-                    <div class="team">
-                        <img id="control-team2-shield" src="" alt="Equipo 2" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
-                        <span id="control-team2-name" class="team-name">Equipo 2</span>
-                    </div>
-                </div>
-                <div class="match-details">
-                    <div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
-                    <div class="match-date">
-                        <i class="fas fa-clock"></i> <span id="control-match-date"></span>
-                    </div>
-                </div>
-                <div class="admin-controls">
-                    <div class="score-controls">
-                        <button id="control-add-goal1" class="btn">+</button>
-                        <button id="control-add-goal2" class="btn">+</button>
-                    </div>
-                    <div class="card-controls">
-                        <button id="control-add-yellow1" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
-                        <button id="control-add-red1" class="btn red"><i class="fas fa-credit-card"></i></button>
-                        <button id="control-add-yellow2" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
-                        <button id="control-add-red2" class="btn red"><i class="fas fa-credit-card"></i></button>
-                    </div>
-                    <div class="player-input-group">
-                        <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Messi)">
-                        <button id="add-event-btn" class="btn" style="width: auto;"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div class="event-log-container">
-                        <h3>Eventos del Partido</h3>
-                        <ul id="event-log" class="event-log"></ul>
-                    </div>
-                </div>
-                <div class="modal-buttons" style="justify-content: space-between;">
-                    <button id="end-match-btn" class="btn red">Finalizar Partido</button>
-                    <button id="control-close-btn" class="btn">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="spinner" class="spinner"></div>
-    <script type="module">
+</div>
+<div class="team">
+<img alt="Equipo 2" class="team-shield" id="control-team2-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'" src=""/>
+<span class="team-name" id="control-team2-name">Equipo 2</span>
+</div>
+</div>
+<div class="match-details">
+<div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
+<div class="match-date">
+<i class="fas fa-clock"></i> <span id="control-match-date"></span>
+</div>
+</div>
+<div class="admin-controls"><div class="score-controls" id="timer-controls" style="gap:8px; flex-wrap:wrap;"><button class="btn" id="btn-start">Iniciar</button><button class="btn" id="btn-pause">Pausar</button><button class="btn" id="btn-resume">Reanudar</button><button class="btn" id="btn-halftime">Descanso (45:00)</button><button class="btn" id="btn-suspend">Suspender</button><button class="btn" id="btn-resume-suspended">Reanudar Partido</button></div>
+<div class="score-controls">
+<button class="btn" id="control-add-goal1">+</button>
+<button class="btn" id="control-add-goal2">+</button>
+</div>
+<div class="card-controls">
+<button class="btn" id="control-add-yellow1" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+<button class="btn red" id="control-add-red1"><i class="fas fa-credit-card"></i></button>
+<button class="btn" id="control-add-yellow2" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+<button class="btn red" id="control-add-red2"><i class="fas fa-credit-card"></i></button>
+</div>
+
+<div class="match-event-panel" id="rich-event-panel">
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+<select class="form-control" id="event-team" style="flex:1; padding:10px; border-radius:8px; border:1px solid #D1D9E6;">
+<option value="1">Equipo 1</option>
+<option value="2">Equipo 2</option>
+<option value="neutral">Neutro</option>
+</select>
+<select class="form-control" id="event-type" style="flex:2; padding:10px; border-radius:8px; border:1px solid #D1D9E6;">
+<option value="gol">Gol</option>
+<option value="penal-gol">Penal Gol</option>
+<option value="penal-errado">Penal Errado</option>
+<option value="tiro-libre-gol">Tiro Libre Gol</option>
+<option value="tiro-libre-travesano">Tiro Libre - Travesaño</option>
+<option value="tiro-libre-errado">Tiro Libre Errado</option>
+<option value="amarilla">Tarjeta Amarilla</option>
+<option value="roja">Tarjeta Roja</option>
+<option value="corner">Tiro de Esquina</option>
+<option value="posesion">Actualizar Posesión</option>
+<option value="mensaje">Mensaje</option>
+</select>
+</div>
+<div class="player-input-group" style="margin-top:10px;">
+<input id="event-player" placeholder="Jugador (ej: L. Díaz)" type="text"/>
+<input id="event-number" placeholder="Dorsal (ej: 7)" type="number"/>
+<input id="event-notes" placeholder="Notas (opcional)" type="text"/>
+<button class="btn" id="btn-add-structured-event"><i class="fas fa-plus"></i></button>
+</div>
+<div id="possession-inputs" style="display:none; gap:10px; align-items:center;">
+<input id="pos-team1" max="100" min="0" placeholder="% Equipo 1" style="padding:10px; border-radius:8px; border:1px solid #D1D9E6;" type="number"/>
+<input id="pos-team2" max="100" min="0" placeholder="% Equipo 2" style="padding:10px; border-radius:8px; border:1px solid #D1D9E6;" type="number"/>
+<button class="btn" id="btn-update-possession">Guardar Posesión</button>
+</div>
+<div id="suspend-reason" style="display:none; margin-top:10px;">
+<input id="suspend-text" placeholder="Razón de suspensión (ej: Desmanes en la cancha)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #D1D9E6;" type="text"/>
+</div>
+</div>
+
+
+<div class="event-log-container">
+<h3>Eventos del Partido</h3>
+<div style="display:grid; grid-template-columns: 1fr 8px 1fr; gap:8px; align-items:start;">
+<ul class="event-log" id="event-log-left"></ul>
+<div style="width:8px; height:100%; background:linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.15)); border-radius:4px;"></div>
+<ul class="event-log" id="event-log-right"></ul>
+</div>
+</div>
+
+</div>
+<div class="modal-buttons" style="justify-content: space-between;">
+<button class="btn red" id="end-match-btn">Finalizar Partido</button>
+<button class="btn" id="control-close-btn">Cerrar</button>
+</div>
+</div>
+</div>
+</div>
+<div class="spinner" id="spinner"></div>
+<script type="module">
         // Importa las funciones y variables desde el archivo de configuración de Firebase
         import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc } from "./firebase-config.js";
 
