@@ -752,7 +752,6 @@ document.head.appendChild(style);
     </div>
     <div id="match-control-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="control-modal-title">Control de Partido</h3>
             <div id="control-match-card" class="live-match-card">
                 <div class="match-header">
                     <div class="team">
@@ -1037,7 +1036,6 @@ document.head.appendChild(style);
                 }
             });
 
-            // Control de partido (modal)
             let matchTimerStart = null;
             
             document.addEventListener('click', async (e) => {
@@ -1058,7 +1056,6 @@ document.head.appendChild(style);
                                 await updateDoc(matchRef, { startTime: new Date().getTime() });
                             }
                             // Iniciar el modal y el timer
-                            showModal('control', 'Control de Partido', '');
                             document.getElementById('control-team1-name').textContent = matchData.team1.name;
                             document.getElementById('control-team2-name').textContent = matchData.team2.name;
                             document.getElementById('control-team1-shield').src = matchData.team1.shield;
