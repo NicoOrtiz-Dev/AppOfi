@@ -478,7 +478,39 @@
                 display: none;
             }
         }
-    </style>
+    
+/* ==== Estilos adicionales ==== */
+#cronometro {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 10px 0;
+  color: var(--primary-color);
+}
+.modal-overlay {
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.modal {
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  text-align:center;
+  max-width:300px;
+}
+.modal button {
+  margin-top:15px;
+}
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+</style>
 </head>
 <body>
     <div class="container">
@@ -495,6 +527,7 @@
                     <h2>Partidos en Vivo</h2>
                     <i class="fas fa-futbol" style="font-size: 2em; color: var(--accent-color);"></i>
                 </div>
+                <div id="cronometro">00:00</div>
                 <div id="live-matches-container">
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
                 </div>
