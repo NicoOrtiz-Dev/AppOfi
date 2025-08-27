@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Incluir el nuevo archivo de configuración de Firebase -->
     <script type="module" src="./firebase-config.js"></script>
 
     <style>
@@ -229,6 +228,11 @@
             justify-content: space-between;
             font-size: 0.9em;
             color: rgba(0, 0, 0, 0.7);
+        }
+
+        .match-time {
+            flex-grow: 1;
+            text-align: center;
         }
         
         .match-details .date, .match-details .section-name {
@@ -489,7 +493,6 @@
             <button class="nav-btn" data-section="admin"><i class="fas fa-user-shield"></i> <span>Admin</span></button>
         </nav>
         <main id="app-content">
-            <!-- Sección de Inicio -->
             <section id="inicio" class="section">
                 <div class="section-header">
                     <h2>Partidos en Vivo</h2>
@@ -499,7 +502,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
                 </div>
             </section>
-            <!-- Sección de Fechas -->
             <section id="fechas" class="section" style="display:none;">
                 <div class="section-header">
                     <h2>Partidos Agendados</h2>
@@ -514,7 +516,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos agendados...</p>
                 </div>
             </section>
-            <!-- Sección de Partidos Finalizados -->
             <section id="partidos" class="section" style="display:none;">
                 <div class="section-header">
                     <h2>Partidos Finalizados</h2>
@@ -524,7 +525,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>
                 </div>
             </section>
-            <!-- Sección de Admin -->
             <section id="admin" class="section" style="display:none;">
                 <div id="admin-login" class="login-form">
                     <h2>Acceso de Administrador</h2>
@@ -558,6 +558,24 @@
                         <div class="form-group">
                             <label for="match-time">Hora del Partido</label>
                             <input type="time" id="match-time">
+                        </div>
+                         <div class="form-group">
+                            <label for="match-stage">Etapa del Partido</label>
+                            <select id="match-stage">
+                                <option value="Fase de Grupos">Fase de Grupos</option>
+                                <option value="Octavos">Octavos de Final</option>
+                                <option value="Cuartos">Cuartos de Final</option>
+                                <option value="Semifinal">Semifinal</option>
+                                <option value="Final">Final</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="match-leg">Partido de Ida/Vuelta</label>
+                            <select id="match-leg">
+                                <option value="Unico">Partido Único</option>
+                                <option value="Ida">Ida</option>
+                                <option value="Vuelta">Vuelta</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="match-type">Tipo de Partido</label>
@@ -740,6 +758,17 @@
                 matches.forEach(match => {
                     const matchElement = document.createElement('div');
                     matchElement.className = 'live-match-card';
+                    let buttonsHTML = '';
+                    if (isAdmin) {
+                        if (match.isLive) {
+                             buttonsHTML = `<button class="btn finalize-btn red" data-match-id="${match.id}">Finalizar</button>`;
+                        } else if (match.isFinished) {
+                            buttonsHTML = `<button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>`;
+                        } else {
+                            buttonsHTML = `<button class="btn activate-btn" data-match-id="${match.id}">Activar Partido</button>`;
+                        }
+                    }
+
                     matchElement.innerHTML = `
                         <div class="match-header">
                             <div class="team">
@@ -763,8 +792,7 @@
                             </div>
                         </div>
                         <div class="admin-actions" style="display:none;">
-                            <button class="btn control-btn" data-match-id="${match.id}">Controlar</button>
-                            <button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>
+                            ${buttonsHTML}
                         </div>
                     `;
                     container.appendChild(matchElement);
@@ -814,30 +842,53 @@
                     
                     // Listener para todos los partidos (en vivo, próximos, finalizados)
                     onSnapshot(matchesRef, (snapshot) => {
-                        const liveMatches = [];
-                        const upcomingMatches = [];
-                        const finishedMatches = [];
+                        const allMatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                        snapshot.docs.forEach(doc => {
-                            const matchData = { id: doc.id, ...doc.data() };
-                            if (matchData.isLive) {
-                                liveMatches.push(matchData);
-                            } else if (matchData.isFinished) {
-                                finishedMatches.push(matchData);
-                            } else {
-                                upcomingMatches.push(matchData);
-                            }
-                        });
+                        const liveMatches = allMatches.filter(match => match.isLive);
+                        const upcomingMatches = allMatches.filter(match => !match.isLive && !match.isFinished);
+                        const finishedMatches = allMatches.filter(match => match.isFinished);
 
                         renderMatches(liveMatchesContainer, liveMatches);
                         renderMatches(upcomingMatchesContainer, upcomingMatches);
                         renderMatches(finishedMatchesContainer, finishedMatches);
                         updateAdminView();
+                        
+                        const tabButtons = document.querySelectorAll('.tab-btn');
+                        const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+                        filterUpcomingMatches(activeTab, upcomingMatches);
                     });
                 } else {
                     console.log("Usuario no autenticado. La aplicación se ejecutará en modo solo lectura.");
                 }
             });
+
+            // Funcionalidad de las pestañas en la sección de fechas
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    const tabType = e.target.dataset.tab;
+                    onSnapshot(collection(db, `matches`), (snapshot) => {
+                        const upcomingMatches = snapshot.docs
+                            .map(doc => ({ id: doc.id, ...doc.data() }))
+                            .filter(match => !match.isLive && !match.isFinished);
+                        filterUpcomingMatches(tabType, upcomingMatches);
+                    });
+                });
+            });
+
+            function filterUpcomingMatches(tabType, matches) {
+                const container = document.getElementById('upcoming-matches-container');
+                let filteredMatches;
+                if (tabType === 'Fechas') {
+                    filteredMatches = matches;
+                } else {
+                    filteredMatches = matches.filter(match => match.type === tabType);
+                }
+                renderMatches(container, filteredMatches);
+            }
+
 
             // Añadir nuevo partido
             addMatchBtn.addEventListener('click', async () => {
@@ -850,6 +901,8 @@
                 const matchDate = document.getElementById('match-date').value;
                 const matchTime = document.getElementById('match-time').value;
                 const matchType = document.getElementById('match-type').value;
+                const matchStage = document.getElementById('match-stage').value;
+                const matchLeg = document.getElementById('match-leg').value;
 
                 if (!team1Name || !team2Name || !matchDate || !matchTime) {
                     showMessage("Error", "Por favor, completa todos los campos del formulario.");
@@ -863,6 +916,8 @@
                         team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
                         date: new Date(`${matchDate}T${matchTime}`).toISOString(),
                         type: matchType,
+                        stage: matchStage,
+                        leg: matchLeg,
                         score1: 0,
                         score2: 0,
                         isLive: false,
@@ -883,7 +938,7 @@
             let matchTimerStart = null;
             
             document.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('control-btn')) {
+                if (e.target.classList.contains('activate-btn')) {
                     const matchId = e.target.dataset.matchId;
                     if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
                     showSpinner();
@@ -895,9 +950,7 @@
                             currentLiveMatchId = matchId;
                             // Actualizar el estado a 'en vivo' si no lo está
                             if (!matchData.isLive) {
-                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00' });
-                                // Establecer la hora de inicio en Firestore si es la primera vez que se controla
-                                await updateDoc(matchRef, { startTime: new Date().getTime() });
+                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00', startTime: new Date().getTime() });
                             }
                             // Iniciar el modal y el timer
                             showModal('control', 'Control de Partido', '');
@@ -931,7 +984,7 @@
                             onSnapshot(eventsRef, (eventSnapshot) => {
                                 const eventLogList = document.getElementById('event-log');
                                 eventLogList.innerHTML = '';
-                                eventSnapshot.docs.forEach(eventDoc => {
+                                eventSnapshot.docs.sort((a, b) => a.data().timestamp.toDate() - b.data().timestamp.toDate()).forEach(eventDoc => {
                                     const eventData = eventDoc.data();
                                     const li = document.createElement('li');
                                     li.textContent = eventData.description;
@@ -963,6 +1016,23 @@
                             hideSpinner();
                             hideModal('confirm');
                         }
+                    });
+                } else if (e.target.classList.contains('finalize-btn')) {
+                    const matchId = e.target.dataset.matchId;
+                    showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? Se moverá a la sección de Partidos Finalizados.', async () => {
+                         if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                         showSpinner();
+                         try {
+                            const matchRef = doc(collection(db, `matches`), matchId);
+                            await updateDoc(matchRef, { isLive: false, isFinished: true, time: 'Finalizado' });
+                            showMessage("Éxito", "Partido finalizado correctamente.");
+                         } catch (e) {
+                             console.error("Error al finalizar partido: ", e);
+                             showMessage("Error", "No se pudo finalizar el partido.");
+                         } finally {
+                             hideSpinner();
+                             hideModal('confirm');
+                         }
                     });
                 }
             });
@@ -1035,7 +1105,7 @@
             document.getElementById('end-match-btn').addEventListener('click', async () => {
                 if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
                 showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
-                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, 'Partido Finalizado');
+                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true, time: 'Finalizado' }, 'Partido Finalizado');
                     hideModal('confirm');
                     hideModal('control');
                 });
