@@ -904,8 +904,10 @@
             pausedTime = 0;
             startTime = null;
             timerStatus = 'stopped';
-            // Update UI
-            document.getElementById('match-timer').textContent = "00:00";
+            const timerElement = document.getElementById('match-timer');
+            if (timerElement) {
+                timerElement.textContent = "00:00";
+            }
         }
         
         function updateTimer() {
@@ -1157,16 +1159,24 @@
             if (!db) return;
             const container = document.getElementById('finished-matches-container');
             container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>';
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isFinished", "==", true), orderBy("timestamp", "desc"));
+            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isFinished", "==", true));
             onSnapshot(q, (snapshot) => {
                 container.innerHTML = '';
                 if (snapshot.empty) {
                     container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos finalizados.</p>';
                     return;
                 }
+                
+                const finishedMatches = [];
                 snapshot.forEach(doc => {
-                    const match = doc.data();
-                    container.appendChild(createFinishedMatchCard(match, doc.id));
+                    finishedMatches.push({...doc.data(), id: doc.id});
+                });
+                
+                // Ordenar los partidos por timestamp en el cliente
+                finishedMatches.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+                
+                finishedMatches.forEach(match => {
+                    container.appendChild(createFinishedMatchCard(match, match.id));
                 });
             });
         }
