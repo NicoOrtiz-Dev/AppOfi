@@ -652,15 +652,10 @@
         import { getAuth, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, where, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Variables de entorno proporcionadas por la plataforma
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
         // Variables globales
-        let app, auth, db, userId;
-        let unsubscribeMatch;
+        let app, auth, db, userId, initialAuthToken;
         let currentLiveMatchId = null;
+        let unsubscribeMatch;
 
         // Referencias a los elementos del DOM para la navegación
         const appContent = document.getElementById('app-content');
@@ -714,7 +709,7 @@
         const playerEventInput = document.getElementById('player-event-input');
         const addEventBtn = document.getElementById('add-event-btn');
         const endMatchBtn = document.getElementById('end-match-btn');
-
+        
         // Función para mostrar el spinner de carga
         const showSpinner = () => { spinner.style.display = 'block'; };
         const hideSpinner = () => { spinner.style.display = 'none'; };
@@ -786,7 +781,7 @@
             try {
                 // Generar un ID de partido único usando el timestamp para evitar conflictos
                 const matchId = `match_${Date.now()}`;
-                const matchRef = doc(db, `artifacts/${appId}/users/${userId}/matches`, matchId);
+                const matchRef = doc(db, `artifacts/${window.__app_id}/users/${userId}/matches`, matchId);
 
                 const newMatchData = {
                     team1Name: team1Name,
@@ -825,7 +820,7 @@
         async function updateMatchState(matchId, updates, eventDescription = null) {
             showSpinner();
             try {
-                const matchRef = doc(db, `artifacts/${appId}/users/${userId}/matches`, matchId);
+                const matchRef = doc(db, `artifacts/${window.__app_id}/users/${userId}/matches`, matchId);
                 const docSnap = await getDoc(matchRef);
                 
                 if (!docSnap.exists()) {
@@ -881,7 +876,7 @@
                 unsubscribeMatch();
             }
             
-            const matchRef = doc(db, `artifacts/${appId}/users/${userId}/matches`, matchId);
+            const matchRef = doc(db, `artifacts/${window.__app_id}/users/${userId}/matches`, matchId);
             unsubscribeMatch = onSnapshot(matchRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const match = docSnap.data();
@@ -1004,7 +999,7 @@
             }
 
             showSpinner();
-            let matchesRef = collection(db, `artifacts/${appId}/users/${userId}/matches`);
+            let matchesRef = collection(db, `artifacts/${window.__app_id}/users/${userId}/matches`);
             let q;
             let container;
             
@@ -1102,9 +1097,18 @@
         
         // Inicialización de la aplicación
         async function initApp() {
+            // Variables de entorno proporcionadas por la plataforma
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            
+            // Asignar variables globales
+            window.__app_id = appId;
+            
             showSpinner();
             if (!firebaseConfig) {
                 showMessage("Error de Configuración", "La configuración de Firebase no está disponible.");
+                hideSpinner();
                 return;
             }
             try {
