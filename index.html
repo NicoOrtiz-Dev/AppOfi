@@ -9,8 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Incluir el archivo de configuración de Firebase externo -->
-    <script type="module" src="firebase-config.js"></script>
+    <!-- Incluir el nuevo archivo de configuración de Firebase -->
+    <script type="module" src="./firebase-config.js"></script>
 
     <style>
         :root {
@@ -163,7 +163,7 @@
         .btn.red:hover {
             box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
         }
-        
+
         .live-match-card {
             background-color: white;
             padding: 25px;
@@ -204,25 +204,24 @@
             font-size: 1.2em;
             font-weight: 700;
         }
-        
+
         .score-container {
-            display: flex;
-            align-items: center;
             font-size: 2.5em;
             font-weight: 900;
             color: var(--primary-color);
             position: relative;
             z-index: 1;
-            justify-content: center; /* Center the score numbers */
-        }
-        
-        .score-container > span {
-            /* Prevent multiple hyphens from appearing */
-            padding: 0 10px;
         }
 
         .score-container::before {
-            content: none; /* Remove the old hyphen */
+            content: '-';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: var(--text-color);
+            font-weight: 400;
         }
 
         .match-details {
@@ -236,17 +235,6 @@
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-        
-        .match-timer {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--text-color);
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 8px 12px;
-            border-radius: 8px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .admin-controls {
@@ -375,7 +363,7 @@
             background-color: var(--card-bg);
             color: var(--text-color);
         }
-        
+
         .match-stats-card {
             background-color: white;
             padding: 20px;
@@ -411,7 +399,6 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
         }
 
         .modal-content {
@@ -422,70 +409,6 @@
             max-width: 400px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             animation: modalFadeIn 0.3s ease-out;
-        }
-
-        .events-modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s ease-out;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .event-section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .event-log-teams {
-            display: flex;
-            gap: 20px;
-        }
-
-        .event-log-team {
-            flex: 1;
-            background-color: #F0F2F5;
-            padding: 15px;
-            border-radius: 8px;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #D1D9E6;
-        }
-        
-        .event-log-team h4 {
-            margin-top: 0;
-            text-align: center;
-            color: var(--primary-color);
-        }
-
-        .event-item {
-            background-color: white;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .event-item p {
-            margin: 0;
-            font-size: 0.9em;
-        }
-
-        .event-item .event-time {
-            font-weight: 600;
-            color: var(--secondary-color);
         }
 
         @keyframes modalFadeIn {
@@ -565,7 +488,6 @@
             <button class="nav-btn" data-section="partidos"><i class="fas fa-trophy"></i> <span>Partidos</span></button>
             <button class="nav-btn" data-section="admin"><i class="fas fa-user-shield"></i> <span>Admin</span></button>
         </nav>
-
         <main id="app-content">
             <!-- Sección de Inicio -->
             <section id="inicio" class="section">
@@ -577,7 +499,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
                 </div>
             </section>
-
             <!-- Sección de Fechas -->
             <section id="fechas" class="section" style="display:none;">
                 <div class="section-header">
@@ -593,7 +514,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos agendados...</p>
                 </div>
             </section>
-
             <!-- Sección de Partidos Finalizados -->
             <section id="partidos" class="section" style="display:none;">
                 <div class="section-header">
@@ -604,7 +524,6 @@
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>
                 </div>
             </section>
-
             <!-- Sección de Admin -->
             <section id="admin" class="section" style="display:none;">
                 <div id="admin-login" class="login-form">
@@ -618,73 +537,42 @@
                         <h3>Añadir Nuevo Partido</h3>
                         <div class="form-group">
                             <label for="team1-name">Nombre del Equipo 1</label>
-                            <input type="text" id="team1-name" placeholder="Ej: Real Madrid" required>
+                            <input type="text" id="team1-name" placeholder="Ej: Real Madrid">
                         </div>
                         <div class="form-group">
                             <label for="team1-shield">Escudo del Equipo 1 (URL)</label>
-                            <input type="text" id="team1-shield" placeholder="Ej: https://..." required>
+                            <input type="text" id="team1-shield" placeholder="Ej: https://...">
                         </div>
                         <div class="form-group">
                             <label for="team2-name">Nombre del Equipo 2</label>
-                            <input type="text" id="team2-name" placeholder="Ej: Barcelona" required>
+                            <input type="text" id="team2-name" placeholder="Ej: Barcelona">
                         </div>
                         <div class="form-group">
                             <label for="team2-shield">Escudo del Equipo 2 (URL)</label>
-                            <input type="text" id="team2-shield" placeholder="Ej: https://..." required>
+                            <input type="text" id="team2-shield" placeholder="Ej: https://...">
                         </div>
                         <div class="form-group">
                             <label for="match-date">Fecha del Partido</label>
-                            <input type="date" id="match-date" required>
+                            <input type="date" id="match-date">
                         </div>
                         <div class="form-group">
                             <label for="match-time">Hora del Partido</label>
-                            <input type="time" id="match-time" required>
+                            <input type="time" id="match-time">
                         </div>
                         <div class="form-group">
                             <label for="match-type">Tipo de Partido</label>
-                            <select id="match-type" required>
+                            <select id="match-type">
                                 <option value="Fechas">Fechas</option>
                                 <option value="Torneos">Torneos</option>
                                 <option value="Copa Juvenil">Copa Juvenil</option>
                             </select>
                         </div>
-                        
-                        <!-- Nuevos controles avanzados -->
-                        <div class="form-group">
-                            <label for="match-stage">Etapa del Torneo</label>
-                            <select id="match-stage">
-                                <option value="Fase de Grupos">Fase de Grupos</option>
-                                <option value="Octavos de Final">Octavos de Final</option>
-                                <option value="Cuartos de Final">Cuartos de Final</option>
-                                <option value="Semifinal">Semifinal</option>
-                                <option value="Final">Final</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="match-leg">Partido de Ida/Vuelta</label>
-                            <select id="match-leg">
-                                <option value="Partido Único">Partido Único</option>
-                                <option value="Ida">Ida</option>
-                                <option value="Vuelta">Vuelta</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="pre-score1">Premarcador Equipo 1 (Opcional)</label>
-                            <input type="number" id="pre-score1" placeholder="Ej: 0">
-                        </div>
-                        <div class="form-group">
-                            <label for="pre-score2">Premarcador Equipo 2 (Opcional)</label>
-                            <input type="number" id="pre-score2" placeholder="Ej: 0">
-                        </div>
-                        
                         <button id="add-match-btn" class="btn">Añadir Partido</button>
                     </div>
                 </div>
             </section>
         </main>
     </div>
-
-    <!-- Modales -->
     <div id="message-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="message-modal-title"></h3>
@@ -694,271 +582,267 @@
             </div>
         </div>
     </div>
-
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="confirm-modal-title"></h3>
             <p id="confirm-modal-message"></p>
             <div class="modal-buttons">
-                <button id="confirm-cancel-btn" class="btn red">Cancelar</button>
-                <button id="confirm-ok-btn" class="btn">Confirmar</button>
+                <button id="confirm-cancel-btn" class="btn">Cancelar</button>
+                <button id="confirm-ok-btn" class="btn red">Aceptar</button>
             </div>
         </div>
     </div>
-    
-    <!-- Nuevo Modal de Eventos del Partido -->
-    <div id="events-modal" class="modal-overlay">
-        <div class="events-modal-content">
-            <div class="event-section-header">
-                <h3 id="events-modal-title">Eventos del Partido</h3>
-                <button id="events-close-btn" class="btn red">Cerrar</button>
-            </div>
-            <div class="event-log-teams">
-                <div class="event-log-team">
-                    <h4 id="team1-events-name"></h4>
-                    <div id="team1-events-log" class="event-log"></div>
-                </div>
-                <div class="event-log-team">
-                    <h4 id="team2-events-name"></h4>
-                    <div id="team2-events-log" class="event-log"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="control-modal" class="modal-overlay">
+    <div id="match-control-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="control-modal-title">Controles de Partido</h3>
-            <div id="live-match-controls">
-                <!-- Controles principales -->
+            <h3 id="control-modal-title">Control de Partido</h3>
+            <div id="control-match-card" class="live-match-card">
+                <div class="match-header">
+                    <div class="team">
+                        <img id="control-team1-shield" src="" alt="Equipo 1" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                        <span id="control-team1-name" class="team-name">Equipo 1</span>
+                    </div>
+                    <div class="score-container">
+                        <span id="control-team1-score">0</span>
+                        -
+                        <span id="control-team2-score">0</span>
+                    </div>
+                    <div class="team">
+                        <img id="control-team2-shield" src="" alt="Equipo 2" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                        <span id="control-team2-name" class="team-name">Equipo 2</span>
+                    </div>
+                </div>
+                <div class="match-details">
+                    <div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
+                    <div class="match-date">
+                        <i class="fas fa-clock"></i> <span id="control-match-date"></span>
+                    </div>
+                </div>
                 <div class="admin-controls">
                     <div class="score-controls">
-                        <button id="score1-minus" class="btn red"><i class="fas fa-minus"></i></button>
-                        <button id="score1-plus" class="btn"><i class="fas fa-plus"></i></button>
-                        <button id="score2-minus" class="btn red"><i class="fas fa-minus"></i></button>
-                        <button id="score2-plus" class="btn"><i class="fas fa-plus"></i></button>
+                        <button id="control-add-goal1" class="btn">+</button>
+                        <button id="control-add-goal2" class="btn">+</button>
                     </div>
-                    <div class="match-time-controls">
-                        <label for="timer-status">Estado del Partido:</label>
-                        <select id="timer-status">
-                            <option value="playing">En juego</option>
-                            <option value="paused">Descanso</option>
-                            <option value="suspended">Suspendido</option>
-                        </select>
-                        <div id="suspension-reason-group" class="form-group" style="display:none;">
-                            <label for="suspension-reason">Razón de la suspensión</label>
-                            <input type="text" id="suspension-reason" placeholder="Ej: Lluvia intensa">
-                        </div>
+                    <div class="card-controls">
+                        <button id="control-add-yellow1" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red1" class="btn red"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-yellow2" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red2" class="btn red"><i class="fas fa-credit-card"></i></button>
+                    </div>
+                    <div class="player-input-group">
+                        <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Messi)">
+                        <button id="add-event-btn" class="btn" style="width: auto;"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="event-log-container">
+                        <h3>Eventos del Partido</h3>
+                        <ul id="event-log" class="event-log"></ul>
                     </div>
                 </div>
-                
-                <!-- Sección de eventos -->
-                <div class="admin-controls" style="margin-top: 20px;">
-                    <h3>Añadir Evento</h3>
-                    <div class="form-group">
-                        <label for="event-type">Tipo de Evento</label>
-                        <select id="event-type">
-                            <option value="" disabled selected>Selecciona un evento</option>
-                            <option value="Gol Equipo 1">Gol Equipo 1</option>
-                            <option value="Gol Equipo 2">Gol Equipo 2</option>
-                            <option value="Tiro Libre">Tiro Libre</option>
-                            <option value="Penal">Penal</option>
-                            <option value="Travesaño">Travesaño</option>
-                            <option value="Errado">Errado</option>
-                            <option value="Cambio">Cambio</option>
-                            <option value="Lesión">Lesión</option>
-                            <option value="Tarjeta amarilla">Tarjeta Amarilla</option>
-                            <option value="Tarjeta roja">Tarjeta Roja</option>
-                        </select>
-                    </div>
-                    <div id="event-details-fields" style="display: none;">
-                        <div class="form-group">
-                            <label for="player-name">Nombre del Jugador</label>
-                            <input type="text" id="player-name" placeholder="Ej: Lionel Messi">
-                        </div>
-                        <div class="form-group">
-                            <label for="player-number">Dorsal del Jugador</label>
-                            <input type="number" id="player-number" placeholder="Ej: 10">
-                        </div>
-                        <div id="team-select-group" class="form-group" style="display:none;">
-                            <label for="event-team">Equipo</label>
-                            <select id="event-team"></select>
-                        </div>
-                    </div>
-                    <button id="add-event-btn" class="btn" style="width: 100%;">Añadir Evento</button>
+                <div class="modal-buttons" style="justify-content: space-between;">
+                    <button id="end-match-btn" class="btn red">Finalizar Partido</button>
+                    <button id="control-close-btn" class="btn">Cerrar</button>
                 </div>
-            </div>
-            
-            <div class="modal-buttons" style="margin-top: 20px;">
-                <button id="end-match-btn" class="btn red">Finalizar Partido</button>
-                <button id="control-close-btn" class="btn">Cerrar</button>
             </div>
         </div>
     </div>
-    
     <div id="spinner" class="spinner"></div>
-
-    <!-- Scripts de Firebase y Lógica -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, serverTimestamp, orderBy, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Importa las funciones y variables desde el archivo de configuración de Firebase
+        import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc } from "./firebase-config.js";
 
-        // Variables globales
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let app;
-        let db;
-        let auth;
-        let userId;
+        // Variables de estado
         let currentLiveMatchId = null;
-        let timerInterval = null;
-        let startTime = null;
-        let pausedTime = 0;
-        let timerStatus = 'stopped';
-        let isAdmin = false;
+        let matchTimerInterval = null;
 
-        // Configuración y autenticación de Firebase
-        async function setupFirebase() {
-            try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                userId = auth.currentUser?.uid;
-                console.log("Autenticación exitosa. User ID:", userId);
-                initializeAppContent();
-            } catch (e) {
-                console.error("Error al inicializar Firebase o autenticarse:", e);
-                // Aquí puedes mostrar un mensaje de error en la UI si lo deseas
-                // showMessage("Error de Conexión", "No se pudo conectar a la base de datos.");
-            }
-        }
-        
-        // Llamar a la función de configuración
-        setupFirebase();
+        // Se ejecuta solo cuando el DOM (la estructura HTML) ha sido completamente cargado.
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Cargado. Esperando autenticación de Firebase.");
 
-        function showSpinner() { document.getElementById('spinner').style.display = 'block'; }
-        function hideSpinner() { document.getElementById('spinner').style.display = 'none'; }
+            // Selectores de elementos
+            const sections = document.querySelectorAll('section');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const liveMatchesContainer = document.getElementById('live-matches-container');
+            const upcomingMatchesContainer = document.getElementById('upcoming-matches-container');
+            const finishedMatchesContainer = document.getElementById('finished-matches-container');
+            const adminLogin = document.getElementById('admin-login');
+            const adminPanel = document.getElementById('admin-panel');
+            const adminPasswordInput = document.getElementById('admin-password');
+            const loginBtn = document.getElementById('login-btn');
+            const addMatchBtn = document.getElementById('add-match-btn');
+            const spinner = document.getElementById('spinner');
 
-        // Funciones de utilidad para modales
-        function showModal(id, title, message, onConfirm = null) {
-            const modal = document.getElementById(`${id}-modal`);
-            document.getElementById(`${id}-modal-title`).textContent = title;
-            document.getElementById(`${id}-modal-message`).textContent = message;
-            if (onConfirm) {
-                document.getElementById(`${id}-ok-btn`).onclick = onConfirm;
+            // Funciones de utilidad para la UI
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
             }
-            modal.style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(`${id}-modal`).style.display = 'none';
-        }
 
-        // Lógica del contador de tiempo
-        function startTimer() {
-            if (timerInterval) return;
-            timerStatus = 'playing';
-            startTime = Date.now() - pausedTime;
-            timerInterval = setInterval(updateTimer, 1000);
-        }
-
-        function pauseTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                pausedTime = Date.now() - startTime;
-                timerStatus = 'paused';
-            }
-        }
-        
-        function suspendTimer(reason) {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-            timerStatus = 'suspended';
-            // Here you could update the match status in Firebase with the suspension reason
-        }
-        
-        function resumeTimer() {
-             if (!timerInterval && timerStatus === 'paused') {
-                timerStatus = 'playing';
-                startTime = Date.now() - pausedTime;
-                timerInterval = setInterval(updateTimer, 1000);
-            }
-        }
-
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-            pausedTime = 0;
-            startTime = null;
-            timerStatus = 'stopped';
-            const timerElement = document.getElementById('match-timer');
-            if (timerElement) {
-                timerElement.textContent = "00:00";
-            }
-        }
-        
-        function updateTimer() {
-            if (timerStatus === 'playing' && startTime !== null) {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                const display = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                if (document.getElementById('match-timer')) {
-                    document.getElementById('match-timer').textContent = display;
+            function showModal(type, title, message, onConfirm = null) {
+                const modal = document.getElementById(`${type}-modal`);
+                if (!modal) return;
+                const titleElement = modal.querySelector('h3');
+                const messageElement = modal.querySelector('p');
+                if (titleElement) titleElement.textContent = title;
+                if (messageElement) messageElement.textContent = message;
+                modal.style.display = 'flex';
+                const confirmBtn = document.getElementById('confirm-ok-btn');
+                if (type === 'confirm' && onConfirm) {
+                    confirmBtn.onclick = onConfirm;
                 }
             }
-        }
 
-        // Lógica de la aplicación
-        function initializeAppContent() {
-            // Manejadores de eventos de navegación
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-                    document.getElementById(btn.dataset.section).style.display = 'block';
+            function hideModal(type) {
+                const modal = document.getElementById(`${type}-modal`);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                if (type === 'control' && matchTimerInterval) {
+                    clearInterval(matchTimerInterval);
+                    matchTimerInterval = null;
+                }
+                currentLiveMatchId = null;
+            }
+
+            function showSpinner() { spinner.style.display = 'flex'; }
+            function hideSpinner() { spinner.style.display = 'none'; }
+            function showMessage(title, message) { showModal('message', title, message); }
+            
+            // Función para actualizar el estado del partido en Firestore
+            async function updateMatchState(matchId, updates, eventDesc = "", isLive = true) {
+                if (!db) { showMessage("Error", "La base de datos no está disponible. Intenta refrescar la página."); return; }
+                showSpinner();
+                try {
+                    const matchRef = doc(collection(db, `matches`), matchId);
+                    await updateDoc(matchRef, { ...updates, isLive: isLive });
+                    if (eventDesc) {
+                        const eventRef = collection(db, `matches/${matchId}/events`);
+                        await addDoc(eventRef, {
+                            description: eventDesc,
+                            timestamp: new Date()
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error al actualizar el estado del partido: ", e);
+                    showMessage("Error", "No se pudo actualizar el partido.");
+                } finally {
+                    hideSpinner();
+                }
+            }
+
+            // Función para renderizar los partidos
+            function renderMatches(container, matches) {
+                container.innerHTML = '';
+                if (matches.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos para mostrar.</p>';
+                    return;
+                }
+                matches.forEach(match => {
+                    const matchElement = document.createElement('div');
+                    matchElement.className = 'live-match-card';
+                    matchElement.innerHTML = `
+                        <div class="match-header">
+                            <div class="team">
+                                <img src="${match.team1.shield}" alt="${match.team1.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                <span class="team-name">${match.team1.name}</span>
+                            </div>
+                            <div class="score-container">
+                                <span>${match.score1}</span>
+                                -
+                                <span>${match.score2}</span>
+                            </div>
+                            <div class="team">
+                                <img src="${match.team2.shield}" alt="${match.team2.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                <span class="team-name">${match.team2.name}</span>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-time">Tiempo: <span>${match.time}</span></div>
+                            <div class="match-date">
+                                <i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div class="admin-actions" style="display:none;">
+                            <button class="btn control-btn" data-match-id="${match.id}">Controlar</button>
+                            <button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>
+                        </div>
+                    `;
+                    container.appendChild(matchElement);
+                });
+                updateAdminView();
+            }
+
+            // Manejo de eventos de la UI
+            navButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const sectionId = e.currentTarget.dataset.section;
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    showSection(sectionId);
                 });
             });
 
-            // Manejadores de eventos de pestañas
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    loadUpcomingMatches(btn.dataset.tab);
-                });
-            });
+            // Lógica de administrador
+            let isAdmin = false;
+            const ADMIN_PASSWORD = "adminpass"; // Contraseña de admin estática
 
-            // Lógica del panel de administración
-            document.getElementById('login-btn').addEventListener('click', async () => {
-                const password = document.getElementById('admin-password').value;
-                if (password === 'adminb17') { // Contraseña de admin hardcodeada
+            loginBtn.addEventListener('click', () => {
+                if (adminPasswordInput.value === ADMIN_PASSWORD) {
                     isAdmin = true;
-                    document.getElementById('admin-login').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                    showMessage("Acceso Concedido", "Bienvenido al panel de administración.");
-                    await loadMatchesForAdmin();
+                    adminLogin.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    updateAdminView();
                 } else {
-                    showMessage("Error", "Contraseña incorrecta.");
+                    showMessage("Error de Autenticación", "Contraseña incorrecta.");
+                    adminPasswordInput.value = '';
                 }
             });
 
-            // Lógica para añadir un nuevo partido
-            document.getElementById('add-match-btn').addEventListener('click', async () => {
+            function updateAdminView() {
+                const adminActionButtons = document.querySelectorAll('.admin-actions');
+                adminActionButtons.forEach(btn => {
+                    btn.style.display = isAdmin ? 'flex' : 'none';
+                });
+            }
+
+            // Lógica de Firebase
+            // Se usa onAuthStateChanged para asegurarse de que Firebase está listo y autenticado
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    console.log("Autenticación de Firebase lista. Conectando a la base de datos.");
+                    const matchesRef = collection(db, `matches`);
+                    
+                    // Listener para todos los partidos (en vivo, próximos, finalizados)
+                    onSnapshot(matchesRef, (snapshot) => {
+                        const liveMatches = [];
+                        const upcomingMatches = [];
+                        const finishedMatches = [];
+
+                        snapshot.docs.forEach(doc => {
+                            const matchData = { id: doc.id, ...doc.data() };
+                            if (matchData.isLive) {
+                                liveMatches.push(matchData);
+                            } else if (matchData.isFinished) {
+                                finishedMatches.push(matchData);
+                            } else {
+                                upcomingMatches.push(matchData);
+                            }
+                        });
+
+                        renderMatches(liveMatchesContainer, liveMatches);
+                        renderMatches(upcomingMatchesContainer, upcomingMatches);
+                        renderMatches(finishedMatchesContainer, finishedMatches);
+                        updateAdminView();
+                    });
+                } else {
+                    console.log("Usuario no autenticado. La aplicación se ejecutará en modo solo lectura.");
+                }
+            });
+
+            // Añadir nuevo partido
+            addMatchBtn.addEventListener('click', async () => {
+                if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                showSpinner();
                 const team1Name = document.getElementById('team1-name').value;
                 const team1Shield = document.getElementById('team1-shield').value;
                 const team2Name = document.getElementById('team2-name').value;
@@ -966,553 +850,202 @@
                 const matchDate = document.getElementById('match-date').value;
                 const matchTime = document.getElementById('match-time').value;
                 const matchType = document.getElementById('match-type').value;
-                const matchStage = document.getElementById('match-stage').value;
-                const matchLeg = document.getElementById('match-leg').value;
-                const preScore1 = parseInt(document.getElementById('pre-score1').value) || 0;
-                const preScore2 = parseInt(document.getElementById('pre-score2').value) || 0;
 
                 if (!team1Name || !team2Name || !matchDate || !matchTime) {
-                    showMessage("Error", "Por favor, completa todos los campos obligatorios.");
+                    showMessage("Error", "Por favor, completa todos los campos del formulario.");
+                    hideSpinner();
                     return;
                 }
 
-                showSpinner();
                 try {
-                    await addMatch(team1Name, team1Shield, team2Name, team2Shield, matchDate, matchTime, matchType, matchStage, matchLeg, preScore1, preScore2);
+                    await addDoc(collection(db, `matches`), {
+                        team1: { name: team1Name, shield: team1Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
+                        team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
+                        date: new Date(`${matchDate}T${matchTime}`).toISOString(),
+                        type: matchType,
+                        score1: 0,
+                        score2: 0,
+                        isLive: false,
+                        isFinished: false,
+                        time: '00:00',
+                        events: []
+                    });
                     showMessage("Éxito", "Partido añadido correctamente.");
-                    document.getElementById('admin-panel').reset();
                 } catch (e) {
-                    console.error("Error al añadir partido:", e);
-                    showMessage("Error", "Ocurrió un error al añadir el partido.");
+                    console.error("Error al añadir partido: ", e);
+                    showMessage("Error", "No se pudo añadir el partido.");
                 } finally {
                     hideSpinner();
                 }
             });
 
-            // Event listener para el tipo de evento en el modal de control
-            document.getElementById('event-type').addEventListener('change', (e) => {
-                const eventType = e.target.value;
-                const playerFields = document.getElementById('event-details-fields');
-                const teamSelectGroup = document.getElementById('team-select-group');
-                
-                playerFields.style.display = 'none';
-                teamSelectGroup.style.display = 'none';
+            // Control de partido (modal)
+            let matchTimerStart = null;
+            
+            document.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('control-btn')) {
+                    const matchId = e.target.dataset.matchId;
+                    if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                    showSpinner();
+                    try {
+                        const matchRef = doc(collection(db, `matches`), matchId);
+                        const docSnap = await getDoc(matchRef);
+                        if (docSnap.exists()) {
+                            const matchData = docSnap.data();
+                            currentLiveMatchId = matchId;
+                            // Actualizar el estado a 'en vivo' si no lo está
+                            if (!matchData.isLive) {
+                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00' });
+                                // Establecer la hora de inicio en Firestore si es la primera vez que se controla
+                                await updateDoc(matchRef, { startTime: new Date().getTime() });
+                            }
+                            // Iniciar el modal y el timer
+                            showModal('control', 'Control de Partido', '');
+                            document.getElementById('control-team1-name').textContent = matchData.team1.name;
+                            document.getElementById('control-team2-name').textContent = matchData.team2.name;
+                            document.getElementById('control-team1-shield').src = matchData.team1.shield;
+                            document.getElementById('control-team2-shield').src = matchData.team2.shield;
+                            document.getElementById('control-team1-score').textContent = matchData.score1;
+                            document.getElementById('control-team2-score').textContent = matchData.score2;
+                            document.getElementById('control-match-date').textContent = new Date(matchData.date).toLocaleDateString();
 
-                if (['Gol Equipo 1', 'Gol Equipo 2', 'Cambio', 'Lesión', 'Tarjeta amarilla', 'Tarjeta roja'].includes(eventType)) {
-                    playerFields.style.display = 'block';
-                }
-                
-                if (['Tiro Libre', 'Penal', 'Travesaño', 'Errado'].includes(eventType)) {
-                    playerFields.style.display = 'block';
-                    teamSelectGroup.style.display = 'block';
+                            // Iniciar el listener del timer para actualizar el tiempo en tiempo real
+                            onSnapshot(matchRef, (doc) => {
+                                const data = doc.data();
+                                document.getElementById('control-team1-score').textContent = data.score1;
+                                document.getElementById('control-team2-score').textContent = data.score2;
+                                if (data.startTime) {
+                                    matchTimerStart = data.startTime;
+                                    if (matchTimerInterval) clearInterval(matchTimerInterval);
+                                    matchTimerInterval = setInterval(() => {
+                                        const now = new Date().getTime();
+                                        const elapsed = Math.floor((now - matchTimerStart) / 1000);
+                                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                                        const seconds = (elapsed % 60).toString().padStart(2, '0');
+                                        document.getElementById('control-match-time').textContent = `${minutes}:${seconds}`;
+                                    }, 1000);
+                                }
+                            });
+                            // Iniciar el listener para el log de eventos
+                            const eventsRef = collection(db, `matches/${matchId}/events`);
+                            onSnapshot(eventsRef, (eventSnapshot) => {
+                                const eventLogList = document.getElementById('event-log');
+                                eventLogList.innerHTML = '';
+                                eventSnapshot.docs.forEach(eventDoc => {
+                                    const eventData = eventDoc.data();
+                                    const li = document.createElement('li');
+                                    li.textContent = eventData.description;
+                                    eventLogList.appendChild(li);
+                                });
+                                // Scroll al final
+                                eventLogList.scrollTop = eventLogList.scrollHeight;
+                            });
+                        }
+                    } catch (e) {
+                        console.error("Error al obtener datos del partido: ", e);
+                        showMessage("Error", "No se pudo cargar el control del partido.");
+                    } finally {
+                        hideSpinner();
+                    }
+                } else if (e.target.classList.contains('delete-btn')) {
+                    const matchId = e.target.dataset.matchId;
+                    showModal('confirm', 'Confirmar Eliminación', '¿Estás seguro de que deseas eliminar este partido?', async () => {
+                        if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                        showSpinner();
+                        try {
+                            const matchRef = doc(collection(db, `matches`), matchId);
+                            await deleteDoc(matchRef);
+                            showMessage("Éxito", "Partido eliminado correctamente.");
+                        } catch (e) {
+                            console.error("Error al eliminar partido: ", e);
+                            showMessage("Error", "No se pudo eliminar el partido.");
+                        } finally {
+                            hideSpinner();
+                            hideModal('confirm');
+                        }
+                    });
                 }
             });
-            
-            // Lógica para añadir un evento al partido en vivo
+
+            // Controladores de los botones del modal de control
+            document.getElementById('control-add-goal1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score1;
+                    await updateMatchState(currentLiveMatchId, { score1: currentScore + 1 }, "¡Gol del Equipo 1!");
+                }
+            });
+            document.getElementById('control-add-goal2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score2;
+                    await updateMatchState(currentLiveMatchId, { score2: currentScore + 1 }, "¡Gol del Equipo 2!");
+                }
+            });
+            document.getElementById('control-add-yellow1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team1.name}.`);
+                }
+            });
+            document.getElementById('control-add-red1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team1.name}.`);
+                }
+            });
+            document.getElementById('control-add-yellow2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
+            document.getElementById('control-add-red2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
             document.getElementById('add-event-btn').addEventListener('click', async () => {
-                const eventType = document.getElementById('event-type').value;
-                const playerName = document.getElementById('player-name').value;
-                const playerNumber = document.getElementById('player-number').value;
-                const eventTeam = document.getElementById('event-team').value;
-
-                if (!eventType) {
-                    showMessage("Error", "Por favor, selecciona un tipo de evento.");
-                    return;
-                }
-                
-                let eventDescription = eventType;
-                if (eventType.includes('Gol')) {
-                    if (!playerName || !playerNumber) {
-                        showMessage("Error", "El nombre y dorsal del jugador son obligatorios para un gol.");
-                        return;
-                    }
-                    const teamName = eventType === 'Gol Equipo 1' ? document.getElementById('team1-events-name').textContent : document.getElementById('team2-events-name').textContent;
-                    eventDescription = `${eventType} de ${playerName} (#${playerNumber}) - ${teamName}`;
-                } else if (eventType.includes('Tiro Libre') || eventType.includes('Penal') || eventType.includes('Travesaño') || eventType.includes('Errado')) {
-                     if (!playerName || !playerNumber || !eventTeam) {
-                        showMessage("Error", "Por favor, completa todos los campos para este evento.");
-                        return;
-                    }
-                    eventDescription = `${eventType} para ${eventTeam}, cobrador: ${playerName} (#${playerNumber})`;
-                } else if (eventType === 'Cambio') {
-                     if (!playerName || !playerNumber) {
-                        showMessage("Error", "El nombre y dorsal del jugador son obligatorios para un cambio.");
-                        return;
-                    }
-                    eventDescription = `Cambio de jugador: ${playerName} (#${playerNumber})`;
-                } else if (eventType === 'Lesión') {
-                    if (!playerName || !playerNumber) {
-                        showMessage("Error", "El nombre y dorsal del jugador son obligatorios para una lesión.");
-                        return;
-                    }
-                    eventDescription = `Lesión de ${playerName} (#${playerNumber})`;
-                } else if (eventType.includes('Tarjeta')) {
-                     if (!playerName || !playerNumber) {
-                        showMessage("Error", "El nombre y dorsal del jugador son obligatorios para una tarjeta.");
-                        return;
-                    }
-                    eventDescription = `${eventType} para ${playerName} (#${playerNumber})`;
-                }
-                
-                await addMatchEvent(currentLiveMatchId, eventDescription);
-                document.getElementById('event-type').value = "";
-                document.getElementById('player-name').value = "";
-                document.getElementById('player-number').value = "";
-                document.getElementById('event-details-fields').style.display = 'none';
-                document.getElementById('team-select-group').style.display = 'none';
-            });
-
-            // Lógica para el estado del temporizador
-            document.getElementById('timer-status').addEventListener('change', async (e) => {
-                const status = e.target.value;
-                const suspensionReasonGroup = document.getElementById('suspension-reason-group');
-                const matchDetailsSection = document.getElementById('match-details-section');
-
-                if (status === 'playing') {
-                    resumeTimer();
-                    suspensionReasonGroup.style.display = 'none';
-                    if (currentLiveMatchId) await updateMatchState(currentLiveMatchId, { timerStatus: 'playing', suspensionReason: '' }, 'Partido Reanudado');
-                    matchDetailsSection.style.display = 'flex';
-                } else if (status === 'paused') {
-                    pauseTimer();
-                    suspensionReasonGroup.style.display = 'none';
-                    if (currentLiveMatchId) await updateMatchState(currentLiveMatchId, { timerStatus: 'paused' }, 'Partido en Descanso');
-                    matchDetailsSection.style.display = 'none';
-                } else if (status === 'suspended') {
-                    suspensionReasonGroup.style.display = 'block';
-                    pauseTimer();
-                    // Don't update Firebase yet, wait for user to enter reason
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                const eventDesc = document.getElementById('player-event-input').value;
+                if (eventDesc) {
+                    await updateMatchState(currentLiveMatchId, {}, eventDesc);
+                    document.getElementById('player-event-input').value = '';
+                } else {
+                    showMessage("Error", "Por favor, ingresa una descripción para el evento.");
                 }
             });
-            
-            document.getElementById('suspension-reason').addEventListener('blur', async () => {
-                const reason = document.getElementById('suspension-reason').value;
-                if (currentLiveMatchId && document.getElementById('timer-status').value === 'suspended') {
-                    await updateMatchState(currentLiveMatchId, { timerStatus: 'suspended', suspensionReason: reason }, `Partido Suspendido: ${reason}`);
-                    const matchDetailsSection = document.getElementById('match-details-section');
-                    matchDetailsSection.style.display = 'none';
-                }
-            });
-
-            // Cargar datos iniciales
-            loadLiveMatches();
-            loadUpcomingMatches('Fechas');
-            loadFinishedMatches();
-        }
-
-        // --- Funciones de comunicación con Firebase ---
-        
-        // Cargar partidos en vivo
-        function loadLiveMatches() {
-            if (!db) return;
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isLive", "==", true));
-            onSnapshot(q, (snapshot) => {
-                const container = document.getElementById('live-matches-container');
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos en vivo en este momento.</p>';
-                    stopTimer();
-                    currentLiveMatchId = null;
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const match = doc.data();
-                    currentLiveMatchId = doc.id;
-                    container.appendChild(createLiveMatchCard(match, doc.id));
-                    
-                    // Lógica para el temporizador y el estado del partido
-                    if (match.timerStatus === 'playing' && timerStatus !== 'playing') {
-                        startTimer();
-                    } else if (match.timerStatus === 'paused' && timerStatus !== 'paused') {
-                        pauseTimer();
-                    } else if (match.timerStatus === 'suspended' && timerStatus !== 'suspended') {
-                        suspendTimer(match.suspensionReason);
-                    }
-                });
-                
-                // Cargar eventos del partido
-                loadMatchEvents(currentLiveMatchId);
-            });
-        }
-        
-        // Cargar partidos agendados
-        function loadUpcomingMatches(type) {
-            if (!db) return;
-            const container = document.getElementById('upcoming-matches-container');
-            container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos...</p>';
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isLive", "==", false), where("isFinished", "==", false), where("type", "==", type));
-            onSnapshot(q, (snapshot) => {
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos agendados para esta sección.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const match = doc.data();
-                    container.appendChild(createUpcomingMatchCard(match, doc.id));
-                });
-            });
-        }
-        
-        // Cargar partidos finalizados
-        function loadFinishedMatches() {
-            if (!db) return;
-            const container = document.getElementById('finished-matches-container');
-            container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos finalizados...</p>';
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isFinished", "==", true));
-            onSnapshot(q, (snapshot) => {
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos finalizados.</p>';
-                    return;
-                }
-                
-                const finishedMatches = [];
-                snapshot.forEach(doc => {
-                    finishedMatches.push({...doc.data(), id: doc.id});
-                });
-                
-                // Ordenar los partidos por timestamp en el cliente
-                finishedMatches.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
-                
-                finishedMatches.forEach(match => {
-                    container.appendChild(createFinishedMatchCard(match, match.id));
-                });
-            });
-        }
-        
-        // Cargar partidos para el panel de administración
-        function loadMatchesForAdmin() {
-            if (!db) return;
-            const adminPanel = document.getElementById('admin-panel');
-            const matchSection = adminPanel.querySelector('.match-list') || document.createElement('div');
-            matchSection.className = 'match-list';
-            matchSection.innerHTML = '<h3>Partidos Creados</h3><p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos...</p>';
-            adminPanel.appendChild(matchSection);
-
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches`), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                matchSection.innerHTML = '<h3>Partidos Creados</h3>';
-                if (snapshot.empty) {
-                    matchSection.innerHTML += '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos creados.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const match = doc.data();
-                    matchSection.appendChild(createAdminMatchCard(match, doc.id));
-                });
-            });
-        }
-        
-        // Cargar eventos del partido en vivo
-        function loadMatchEvents(matchId) {
-            if (!db) return;
-            const q = query(collection(db, `artifacts/${appId}/public/data/matches/${matchId}/events`), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const team1EventsLog = document.getElementById('team1-events-log');
-                const team2EventsLog = document.getElementById('team2-events-log');
-                team1EventsLog.innerHTML = '';
-                team2EventsLog.innerHTML = '';
-                
-                snapshot.forEach(doc => {
-                    const event = doc.data();
-                    const eventItem = document.createElement('div');
-                    eventItem.className = 'event-item';
-                    
-                    const time = event.timestamp ? new Date(event.timestamp.seconds * 1000).toLocaleTimeString() : 'N/A';
-                    eventItem.innerHTML = `<p><span class="event-time">${time}:</span> ${event.description}</p>`;
-                    
-                    // Asignar evento al equipo correcto si aplica
-                    if (event.description.includes('Gol Equipo 1')) {
-                        team1EventsLog.appendChild(eventItem);
-                    } else if (event.description.includes('Gol Equipo 2')) {
-                        team2EventsLog.appendChild(eventItem);
-                    } else {
-                        // O agregar a un log general si no pertenece a un equipo específico
-                        // Para este caso, lo agregamos a ambos para que sea visible
-                        team1EventsLog.appendChild(eventItem.cloneNode(true));
-                        team2EventsLog.appendChild(eventItem.cloneNode(true));
-                    }
-                });
-            });
-        }
-        
-        async function addMatch(team1Name, team1Shield, team2Name, team2Shield, date, time, type, stage, leg, preScore1, preScore2) {
-            if (!db) return;
-            const newMatch = {
-                team1Name,
-                team1Shield,
-                team2Name,
-                team2Shield,
-                date,
-                time,
-                type,
-                stage,
-                leg,
-                preScore1,
-                preScore2,
-                score1: 0,
-                score2: 0,
-                isLive: false,
-                isFinished: false,
-                timerStatus: 'stopped',
-                suspensionReason: '',
-                timestamp: serverTimestamp()
-            };
-            const colRef = collection(db, `artifacts/${appId}/public/data/matches`);
-            await addDoc(colRef, newMatch);
-        }
-        
-        async function updateMatchState(matchId, updates, eventDescription = null) {
-            if (!db || !matchId) return;
-            const matchRef = doc(db, `artifacts/${appId}/public/data/matches`, matchId);
-            await updateDoc(matchRef, updates);
-            if (eventDescription) {
-                await addMatchEvent(matchId, eventDescription);
-            }
-        }
-        
-        async function addMatchEvent(matchId, description) {
-            if (!db || !matchId) return;
-            const eventsColRef = collection(db, `artifacts/${appId}/public/data/matches/${matchId}/events`);
-            await addDoc(eventsColRef, {
-                description,
-                timestamp: serverTimestamp()
-            });
-        }
-
-        async function deleteMatch(matchId) {
-            if (!db) return;
-            const matchRef = doc(db, `artifacts/${appId}/public/data/matches`, matchId);
-            await deleteDoc(matchRef);
-        }
-
-        // --- Funciones para crear elementos HTML dinámicamente ---
-
-        function createLiveMatchCard(match, matchId) {
-            const card = document.createElement('div');
-            card.className = 'live-match-card';
-            
-            const matchStatusDisplay = match.timerStatus === 'suspended' ? `Suspendido: ${match.suspensionReason}` : `${match.stage} - ${match.leg}`;
-            
-            card.innerHTML = `
-                <div class="match-header">
-                    <div class="team">
-                        <img src="${match.team1Shield}" alt="Escudo de ${match.team1Name}" class="team-shield">
-                        <span class="team-name">${match.team1Name}</span>
-                    </div>
-                    <div class="score-container">
-                        <span>${match.score1}</span> - <span>${match.score2}</span>
-                    </div>
-                    <div class="team">
-                        <img src="${match.team2Shield}" alt="Escudo de ${match.team2Name}" class="team-shield">
-                        <span class="team-name">${match.team2Name}</span>
-                    </div>
-                </div>
-                <div class="match-details" id="match-details-section">
-                    <span>${matchStatusDisplay}</span>
-                    <span id="match-timer" class="match-timer">00:00</span>
-                    <span>${match.date} - ${match.time}</span>
-                </div>
-                <div class="admin-controls" style="${isAdmin ? 'display: flex;' : 'display: none;'}">
-                    <button class="btn show-events-btn">Ver Eventos</button>
-                    <button class="btn open-control-btn">Abrir Controles</button>
-                </div>
-                <div class="event-log-live-display">
-                    <h3 style="text-align: center;">Últimos Eventos</h3>
-                    <div class="event-log">
-                        <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay eventos aún...</p>
-                    </div>
-                </div>
-            `;
-            
-            // Lógica para mostrar eventos del partido en el modal
-            card.querySelector('.show-events-btn').addEventListener('click', () => {
-                const eventsModal = document.getElementById('events-modal');
-                document.getElementById('events-modal-title').textContent = `Eventos: ${match.team1Name} vs ${match.team2Name}`;
-                document.getElementById('team1-events-name').textContent = match.team1Name;
-                document.getElementById('team2-events-name').textContent = match.team2Name;
-                eventsModal.style.display = 'flex';
-                // La carga de eventos se maneja con el onSnapshot en loadMatchEvents
-            });
-            
-            document.getElementById('events-close-btn').addEventListener('click', () => hideModal('events'));
-            
-            // Lógica para el modal de control
-            card.querySelector('.open-control-btn').addEventListener('click', () => {
-                const controlModal = document.getElementById('control-modal');
-                document.getElementById('control-modal-title').textContent = `Controles: ${match.team1Name} vs ${match.team2Name}`;
-                
-                // Configurar los selectores de equipo en el modal de control
-                const eventTeamSelect = document.getElementById('event-team');
-                eventTeamSelect.innerHTML = `
-                    <option value="${match.team1Name}">${match.team1Name}</option>
-                    <option value="${match.team2Name}">${match.team2Name}</option>
-                `;
-                
-                // Botones de puntuación
-                document.getElementById('score1-plus').onclick = async () => await updateMatchState(matchId, { score1: match.score1 + 1 }, `Gol de ${match.team1Name}`);
-                document.getElementById('score1-minus').onclick = async () => await updateMatchState(matchId, { score1: Math.max(0, match.score1 - 1) });
-                document.getElementById('score2-plus').onclick = async () => await updateMatchState(matchId, { score2: match.score2 + 1 }, `Gol de ${match.team2Name}`);
-                document.getElementById('score2-minus').onclick = async () => await updateMatchState(matchId, { score2: Math.max(0, match.score2 - 1) });
-                
-                // Botón para finalizar partido
-                document.getElementById('end-match-btn').onclick = () => {
-                    showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? Se moverá a la sección de Partidos Finalizados.', async () => {
-                        // Antes de finalizar, asegúrate de que no haya otro partido en vivo
-                        const liveQuery = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isLive", "==", true));
-                        const liveSnapshot = await getDocs(liveQuery);
-                        if (!liveSnapshot.empty) {
-                            showMessage("Error", "Ya hay un partido en vivo. Finalízalo para poder activar otro.");
-                            hideModal('confirm');
-                            return;
-                        }
-
-                        await updateMatchState(matchId, { isLive: false, isFinished: true });
-                        stopTimer();
-                        hideModal('confirm');
-                        hideModal('control');
-                    });
-                };
-
-                controlModal.style.display = 'flex';
-            });
-            
-            document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
-
-            return card;
-        }
-
-        function createUpcomingMatchCard(match, matchId) {
-            const card = document.createElement('div');
-            card.className = 'upcoming-match-card';
-            
-            // Determinar si el partido es de ida o vuelta para mostrar en la sección amarilla
-            const matchStageAndLeg = match.stage === "Fase de Grupos" && match.leg === "Partido Único" ? "Fase de Grupos" : `${match.stage} - ${match.leg}`;
-            
-            card.innerHTML = `
-                <div class="match-header">
-                    <div class="team">
-                        <img src="${match.team1Shield}" alt="Escudo de ${match.team1Name}" class="team-shield">
-                        <span class="team-name">${match.team1Name}</span>
-                    </div>
-                    <div class="score-container"><span>vs</span></div>
-                    <div class="team">
-                        <img src="${match.team2Shield}" alt="Escudo de ${match.team2Name}" class="team-shield">
-                        <span class="team-name">${match.team2Name}</span>
-                    </div>
-                </div>
-                <div class="match-details">
-                    <span class="date"><i class="far fa-clock"></i> ${match.date} ${match.time}</span>
-                    <span class="section-name"><i class="fas fa-info-circle"></i> ${matchStageAndLeg}</span>
-                </div>
-            `;
-            return card;
-        }
-        
-        function createFinishedMatchCard(match, matchId) {
-            const card = document.createElement('div');
-            card.className = 'upcoming-match-card';
-            card.innerHTML = `
-                <div class="match-header">
-                    <div class="team">
-                        <img src="${match.team1Shield}" alt="Escudo de ${match.team1Name}" class="team-shield">
-                        <span class="team-name">${match.team1Name}</span>
-                    </div>
-                    <div class="score-container">
-                        <span>${match.score1}</span> - <span>${match.score2}</span>
-                    </div>
-                    <div class="team">
-                        <img src="${match.team2Shield}" alt="Escudo de ${match.team2Name}" class="team-shield">
-                        <span class="team-name">${match.team2Name}</span>
-                    </div>
-                </div>
-                <div class="match-details">
-                    <span class="date"><i class="far fa-calendar-alt"></i> Finalizado: ${match.date}</span>
-                    <span class="section-name"><i class="fas fa-trophy"></i> ${match.stage}</span>
-                </div>
-                <div class="admin-only-btn-container" style="${isAdmin ? 'display: flex; justify-content: flex-end;' : 'display: none;'}">
-                    <button class="admin-only-btn delete-match-btn" data-match-id="${matchId}">Eliminar</button>
-                </div>
-            `;
-            
-            card.querySelector('.delete-match-btn').addEventListener('click', async (e) => {
-                const id = e.target.dataset.matchId;
-                showModal('confirm', 'Eliminar Partido', '¿Estás seguro de que quieres eliminar este partido de forma permanente?', async () => {
-                    await deleteMatch(id);
+            document.getElementById('end-match-btn').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
+                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, 'Partido Finalizado');
                     hideModal('confirm');
+                    hideModal('control');
                 });
             });
 
-            return card;
-        }
-
-        function createAdminMatchCard(match, matchId) {
-            const card = document.createElement('div');
-            card.className = 'upcoming-match-card';
-            card.innerHTML = `
-                <div class="match-header">
-                    <div class="team">
-                        <img src="${match.team1Shield}" alt="Escudo de ${match.team1Name}" class="team-shield">
-                        <span class="team-name">${match.team1Name}</span>
-                    </div>
-                    <div class="score-container">
-                        <span>${match.score1}</span> - <span>${match.score2}</span>
-                    </div>
-                    <div class="team">
-                        <img src="${match.team2Shield}" alt="Escudo de ${match.team2Name}" class="team-shield">
-                        <span class="team-name">${match.team2Name}</span>
-                    </div>
-                </div>
-                <div class="match-details">
-                    <span class="date"><i class="far fa-calendar-alt"></i> ${match.date} - ${match.time}</span>
-                    <span class="section-name"><i class="fas fa-info-circle"></i> ${match.stage}</span>
-                </div>
-                <div class="admin-only-btn-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-                    ${match.isLive ? `<button class="admin-only-btn red">Activo</button>` : `<button class="admin-only-btn activate-match-btn" data-match-id="${matchId}">Activar</button>`}
-                    ${match.isFinished ? `<button class="admin-only-btn delete-match-btn" data-match-id="${matchId}">Eliminar</button>` : ''}
-                </div>
-            `;
-            
-            const activateBtn = card.querySelector('.activate-match-btn');
-            if (activateBtn) {
-                activateBtn.addEventListener('click', async (e) => {
-                    const id = e.target.dataset.matchId;
-                    showModal('confirm', 'Activar Partido', '¿Estás seguro de que quieres activar este partido para el modo en vivo?', async () => {
-                        // Antes de activar, asegúrate de que no haya otro partido en vivo
-                        const liveQuery = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isLive", "==", true));
-                        const liveSnapshot = await getDocs(liveQuery);
-                        if (!liveSnapshot.empty) {
-                            showMessage("Error", "Ya hay un partido en vivo. Finalízalo para poder activar otro.");
-                            hideModal('confirm');
-                            return;
-                        }
-                        
-                        await updateMatchState(id, { isLive: true, isFinished: false });
-                        hideModal('confirm');
-                        showMessage("Éxito", "Partido activado. Ahora está en la sección de 'Partidos en Vivo'.");
-                    });
-                });
-            }
-            
-            const deleteBtn = card.querySelector('.delete-match-btn');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', async (e) => {
-                    const id = e.target.dataset.matchId;
-                     showModal('confirm', 'Eliminar Partido', '¿Estás seguro de que quieres eliminar este partido de forma permanente?', async () => {
-                        await deleteMatch(id);
-                        hideModal('confirm');
-                    });
-                });
-            }
-
-            return card;
-        }
-
-        // --- Al cargar la página ---
-        window.onload = function() {
-            initializeAppContent();
-        }
+            // Controladores para los modales
+            document.getElementById('modal-close-btn').addEventListener('click', () => hideModal('message'));
+            document.getElementById('confirm-cancel-btn').addEventListener('click', () => hideModal('confirm'));
+            document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
+        });
     </script>
 </body>
 </html>
