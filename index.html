@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Incluir el archivo de configuración de Firebase externo -->
-    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="firebase-config.js"></script>
 
     <style>
         :root {
@@ -821,35 +821,29 @@
         let isAdmin = false;
 
         // Configuración y autenticación de Firebase
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            if (initialAuthToken) {
-                signInWithCustomToken(auth, initialAuthToken)
-                    .then(userCredential => {
-                        userId = userCredential.user.uid;
-                        console.log("Autenticación exitosa con token personalizado.");
-                        initializeAppContent();
-                    })
-                    .catch(error => {
-                        console.error("Error al autenticarse con token personalizado, intentando autenticación anónima.", error);
-                        signInAnonymously(auth).then(userCredential => {
-                            userId = userCredential.user.uid;
-                            console.log("Autenticación anónima exitosa.");
-                            initializeAppContent();
-                        });
-                    });
-            } else {
-                signInAnonymously(auth).then(userCredential => {
-                    userId = userCredential.user.uid;
-                    console.log("Autenticación anónima exitosa.");
-                    initializeAppContent();
-                });
+        async function setupFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid;
+                console.log("Autenticación exitosa. User ID:", userId);
+                initializeAppContent();
+            } catch (e) {
+                console.error("Error al inicializar Firebase o autenticarse:", e);
+                // Aquí puedes mostrar un mensaje de error en la UI si lo deseas
+                // showMessage("Error de Conexión", "No se pudo conectar a la base de datos.");
             }
-        } catch (e) {
-            console.error("Error al inicializar Firebase:", e);
         }
+        
+        // Llamar a la función de configuración
+        setupFirebase();
 
         function showSpinner() { document.getElementById('spinner').style.display = 'block'; }
         function hideSpinner() { document.getElementById('spinner').style.display = 'none'; }
