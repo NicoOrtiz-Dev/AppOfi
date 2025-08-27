@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Incluir el nuevo archivo de configuración de Firebase -->
+    <!-- Incluir el archivo de configuración de Firebase externo -->
     <script type="module" src="./firebase-config.js"></script>
 
     <style>
@@ -1037,7 +1037,7 @@
                         showMessage("Error", "Por favor, completa todos los campos para este evento.");
                         return;
                     }
-                    eventDescription = `${eventType} de ${eventTeam}, cobrador: ${playerName} (#${playerNumber})`;
+                    eventDescription = `${eventType} para ${eventTeam}, cobrador: ${playerName} (#${playerNumber})`;
                 } else if (eventType === 'Cambio') {
                      if (!playerName || !playerNumber) {
                         showMessage("Error", "El nombre y dorsal del jugador son obligatorios para un cambio.");
@@ -1355,6 +1355,15 @@
                 // Botón para finalizar partido
                 document.getElementById('end-match-btn').onclick = () => {
                     showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? Se moverá a la sección de Partidos Finalizados.', async () => {
+                        // Antes de finalizar, asegúrate de que no haya otro partido en vivo
+                        const liveQuery = query(collection(db, `artifacts/${appId}/public/data/matches`), where("isLive", "==", true));
+                        const liveSnapshot = await getDocs(liveQuery);
+                        if (!liveSnapshot.empty) {
+                            showMessage("Error", "Ya hay un partido en vivo. Finalízalo para poder activar otro.");
+                            hideModal('confirm');
+                            return;
+                        }
+
                         await updateMatchState(matchId, { isLive: false, isFinished: true });
                         stopTimer();
                         hideModal('confirm');
