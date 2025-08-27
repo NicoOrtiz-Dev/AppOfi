@@ -742,10 +742,11 @@
         });
         controlCloseBtn.addEventListener('click', hideMatchControlModal);
         
-        // ====================================================================
-        // Inicio de la inyección de las nuevas funciones de administración
-        // ====================================================================
-
+        /**
+         * Añade un nuevo partido a la base de datos de Firestore.
+         * La información del partido se toma de los campos de entrada en el panel de administración.
+         * Se maneja la carga con un spinner y se muestra un mensaje de éxito o error.
+         */
         async function addNewMatch() {
             if (!db || !userId) {
                 showMessage("Error", "La base de datos no está disponible.");
@@ -798,6 +799,12 @@
             }
         }
         
+        /**
+         * Actualiza el estado de un partido en la base de datos de Firestore.
+         * @param {string} matchId - ID del documento del partido a actualizar.
+         * @param {object} updates - Objeto con los campos a actualizar.
+         * @param {string} [eventDescription=null] - Descripción de un evento para añadir al log.
+         */
         async function updateMatchState(matchId, updates, eventDescription = null) {
             if (!db || !userId) {
                 showMessage("Error", "La base de datos no está disponible.");
@@ -839,22 +846,10 @@
             }
         }
 
-        async function endMatch() {
-            if (!currentLiveMatchId || !db || !userId) {
-                showMessage("Error", "La base de datos no está disponible.");
-                return;
-            }
-            showConfirm(
-                "Finalizar Partido",
-                "¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.",
-                async () => {
-                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, "Partido Finalizado");
-                    hideMatchControlModal();
-                    fetchAndRenderMatches('live');
-                }
-            );
-        }
-
+        /**
+         * Abre el modal de control para un partido en vivo y configura un listener en tiempo real.
+         * @param {string} matchId - ID del documento del partido a controlar.
+         */
         async function openMatchControlModal(matchId) {
             if (!db || !userId) {
                 showMessage("Error", "La base de datos no está disponible.");
@@ -903,9 +898,22 @@
             });
         }
         
+        // Listeners para los botones de administración
         addMatchBtn.addEventListener('click', addNewMatch);
-        endMatchBtn.addEventListener('click', endMatch);
-
+        
+        // Este listener ahora usa la función showConfirm
+        endMatchBtn.addEventListener('click', () => {
+            showConfirm(
+                "Finalizar Partido",
+                "¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.",
+                async () => {
+                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, "Partido Finalizado");
+                    hideMatchControlModal();
+                    fetchAndRenderMatches('live');
+                }
+            );
+        });
+        
         controlAddGoal1Btn.addEventListener('click', () => {
             const currentScore = parseInt(controlTeam1Score.textContent, 10);
             updateMatchState(currentLiveMatchId, { team1Score: currentScore + 1 }, `¡Gol de ${controlTeam1Name.textContent}!`);
@@ -942,13 +950,8 @@
                 showMessage("Error", "Por favor, ingresa una descripción para el evento.");
             }
         });
-        
-        // ====================================================================
-        // Fin de la inyección de las nuevas funciones de administración
-        // ====================================================================
 
-
-        // El siguiente código es del original que me enviaste
+        // El siguiente código es del original que me enviaste y está integrado con las nuevas funciones
         document.getElementById('login-btn').addEventListener('click', () => {
             const password = document.getElementById('admin-password').value;
             if (password === '123') { // Contraseña de prueba
@@ -986,6 +989,11 @@
             });
         });
 
+        /**
+         * Fetches matches from Firestore based on their type (live, upcoming, finished)
+         * and renders them to the appropriate container.
+         * @param {string} type - The type of matches to fetch ('live', 'upcoming', or 'finished').
+         */
         async function fetchAndRenderMatches(type) {
             if (!db || !userId) {
                 showMessage("Error", "La base de datos no está disponible. Por favor, recarga la página.");
