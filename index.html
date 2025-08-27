@@ -209,6 +209,19 @@
             font-size: 2.5em;
             font-weight: 900;
             color: var(--primary-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-container::before {
+            content: '-';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: var(--text-color);
+            font-weight: 400;
         }
 
         .match-details {
@@ -218,11 +231,6 @@
             color: rgba(0, 0, 0, 0.7);
         }
         
-        .match-time {
-            flex-grow: 1;
-            text-align: center;
-        }
-
         .match-details .date, .match-details .section-name {
             display: flex;
             align-items: center;
@@ -391,8 +399,6 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            padding: 20px;
-            box-sizing: border-box;
         }
 
         .modal-content {
@@ -403,7 +409,6 @@
             max-width: 400px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             animation: modalFadeIn 0.3s ease-out;
-            position: relative;
         }
 
         @keyframes modalFadeIn {
@@ -427,86 +432,25 @@
             font-size: 1em;
             padding: 10px 20px;
         }
-        
-        .modal-close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: rgba(0,0,0,0.5);
-            cursor: pointer;
-        }
-        
-        .modal-close-btn:hover {
-            color: var(--primary-color);
-        }
 
-        .event-modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            width: 95%;
-            max-width: 800px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s ease-out;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .event-modal-content h3 {
-            text-align: center;
-        }
-        
-        .events-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .events-column {
-            flex: 1;
-            min-width: 250px;
+        .match-event-panel {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .event-log-item {
-            background-color: #f0f4f7;
-            padding: 10px;
-            border-radius: 8px;
-            animation: eventSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-            border-left: 4px solid var(--primary-color);
-            transition: all 0.3s ease;
+        .player-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
-        @keyframes eventSlideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .player-input-group input {
+            flex: 1;
         }
 
-        .event-log-item.team2 {
-            border-left: 4px solid var(--secondary-color);
-            animation: eventSlideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-        }
-        
-        @keyframes eventSlideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .event-log-item strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .event-log-item span {
-            font-size: 0.9em;
-            color: rgba(0, 0, 0, 0.6);
+        .player-input-group .btn {
+            padding: 8px 12px;
         }
 
         .spinner {
@@ -615,24 +559,6 @@
                             <label for="match-time">Hora del Partido</label>
                             <input type="time" id="match-time">
                         </div>
-                         <div class="form-group">
-                            <label for="match-stage">Etapa del Partido</label>
-                            <select id="match-stage">
-                                <option value="Fase de Grupos">Fase de Grupos</option>
-                                <option value="Octavos">Octavos de Final</option>
-                                <option value="Cuartos">Cuartos de Final</option>
-                                <option value="Semifinal">Semifinal</option>
-                                <option value="Final">Final</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="match-leg">Partido de Ida/Vuelta</label>
-                            <select id="match-leg">
-                                <option value="Unico">Partido Único</option>
-                                <option value="Ida">Ida</option>
-                                <option value="Vuelta">Vuelta</option>
-                            </select>
-                        </div>
                         <div class="form-group">
                             <label for="match-type">Tipo de Partido</label>
                             <select id="match-type">
@@ -649,7 +575,6 @@
     </div>
     <div id="message-modal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="hideModal('message')">&times;</button>
             <h3 id="message-modal-title"></h3>
             <p id="message-modal-message"></p>
             <div class="modal-buttons">
@@ -659,7 +584,6 @@
     </div>
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="hideModal('confirm')">&times;</button>
             <h3 id="confirm-modal-title"></h3>
             <p id="confirm-modal-message"></p>
             <div class="modal-buttons">
@@ -669,10 +593,9 @@
         </div>
     </div>
     <div id="match-control-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <button class="modal-close-btn" onclick="hideModal('control')">&times;</button>
+        <div class="modal-content">
             <h3 id="control-modal-title">Control de Partido</h3>
-            <div id="control-match-card" class="live-match-card" style="padding: 10px;">
+            <div id="control-match-card" class="live-match-card">
                 <div class="match-header">
                     <div class="team">
                         <img id="control-team1-shield" src="" alt="Equipo 1" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
@@ -688,98 +611,53 @@
                         <span id="control-team2-name" class="team-name">Equipo 2</span>
                     </div>
                 </div>
-                <div class="match-details" style="justify-content: center; flex-direction: column; text-align: center;">
-                    <div class="match-info" id="match-info-status">
-                        <i class="fas fa-tag"></i> <span id="match-stage-info">Etapa:</span> - <span id="match-leg-info">Tipo:</span>
-                    </div>
-                    <div class="match-time" id="match-time-display" style="font-size: 1.5em; font-weight: bold; margin-top: 10px;">
-                        00:00
-                    </div>
-                    <div class="match-info" id="suspension-info" style="display: none;">
-                        <i class="fas fa-exclamation-triangle" style="color: #FFC107;"></i> <span id="suspension-reason"></span>
+                <div class="match-details">
+                    <div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
+                    <div class="match-date">
+                        <i class="fas fa-clock"></i> <span id="control-match-date"></span>
                     </div>
                 </div>
                 <div class="admin-controls">
                     <div class="score-controls">
-                        <button id="add-goal1-btn" class="btn" data-event-type="gol" data-team-id="1">Gol Eq. 1</button>
-                        <button id="add-goal2-btn" class="btn" data-event-type="gol" data-team-id="2">Gol Eq. 2</button>
+                        <button id="control-add-goal1" class="btn">+</button>
+                        <button id="control-add-goal2" class="btn">+</button>
                     </div>
-                    <div class="player-event-controls">
-                        <button id="freekick1-btn" class="btn" data-event-type="tiro-libre" data-team-id="1">Tiro Libre Eq. 1</button>
-                        <button id="freekick2-btn" class="btn" data-event-type="tiro-libre" data-team-id="2">Tiro Libre Eq. 2</button>
-                        <button id="penalty1-btn" class="btn" data-event-type="penal" data-team-id="1">Penal Eq. 1</button>
-                        <button id="penalty2-btn" class="btn" data-event-type="penal" data-team-id="2">Penal Eq. 2</button>
-                        <button id="yellow1-btn" class="btn" data-event-type="tarjeta-amarilla" data-team-id="1" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i> Amarilla Eq. 1</button>
-                        <button id="yellow2-btn" class="btn" data-event-type="tarjeta-amarilla" data-team-id="2" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i> Amarilla Eq. 2</button>
-                        <button id="red1-btn" class="btn red" data-event-type="tarjeta-roja" data-team-id="1"><i class="fas fa-credit-card"></i> Roja Eq. 1</button>
-                        <button id="red2-btn" class="btn red" data-event-type="tarjeta-roja" data-team-id="2"><i class="fas fa-credit-card"></i> Roja Eq. 2</button>
-                        <button id="change1-btn" class="btn" data-event-type="cambio" data-team-id="1"><i class="fas fa-exchange-alt"></i> Cambio Eq. 1</button>
-                        <button id="change2-btn" class="btn" data-event-type="cambio" data-team-id="2"><i class="fas fa-exchange-alt"></i> Cambio Eq. 2</button>
-                        <button id="injury1-btn" class="btn" data-event-type="lesion" data-team-id="1"><i class="fas fa-medkit"></i> Lesión Eq. 1</button>
-                        <button id="injury2-btn" class="btn" data-event-type="lesion" data-team-id="2"><i class="fas fa-medkit"></i> Lesión Eq. 2</button>
-                        <button id="crossbar-btn" class="btn" data-event-type="travesano"><i class="fas fa-times"></i> Travesaño</button>
-                        <button id="missed-btn" class="btn" data-event-type="errado"><i class="fas fa-times-circle"></i> Errado</button>
+                    <div class="card-controls">
+                        <button id="control-add-yellow1" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red1" class="btn red"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-yellow2" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red2" class="btn red"><i class="fas fa-credit-card"></i></button>
                     </div>
-                    <div class="time-controls" style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                        <button id="pause-match-btn" class="btn" style="background-color: #FFC107;"><i class="fas fa-pause"></i> Descanso</button>
-                        <button id="resume-match-btn" class="btn" style="display:none;"><i class="fas fa-play"></i> Reanudar</button>
-                        <button id="suspend-match-btn" class="btn red" style="background-color: #FF5722;"><i class="fas fa-hand-paper"></i> Suspender</button>
-                        <button id="end-match-btn" class="btn red"><i class="fas fa-flag"></i> Finalizar</button>
+                    <div class="player-input-group">
+                        <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Messi)">
+                        <button id="add-event-btn" class="btn" style="width: auto;"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="event-log-container">
+                        <h3>Eventos del Partido</h3>
+                        <ul id="event-log" class="event-log"></ul>
                     </div>
                 </div>
-                <div class="modal-buttons" style="justify-content: flex-end;">
+                <div class="modal-buttons" style="justify-content: space-between;">
+                    <button id="end-match-btn" class="btn red">Finalizar Partido</button>
                     <button id="control-close-btn" class="btn">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal de Eventos -->
-    <div id="events-modal" class="modal-overlay">
-        <div class="event-modal-content">
-            <button class="modal-close-btn" onclick="hideModal('events')">&times;</button>
-            <h3 id="events-modal-title">Eventos del Partido</h3>
-            <div class="events-container">
-                <div class="events-column" id="team1-events">
-                    <h4>Eventos de <span id="team1-events-name"></span></h4>
-                </div>
-                <div class="events-column" id="team2-events">
-                    <h4>Eventos de <span id="team2-events-name"></span></h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de confirmación para eventos -->
-    <div id="event-input-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-btn" onclick="hideModal('event-input')">&times;</button>
-            <h3 id="event-input-title"></h3>
-            <div class="form-group">
-                <label for="event-player-name">Nombre del Jugador</label>
-                <input type="text" id="event-player-name" placeholder="Ej: Lionel Messi">
-            </div>
-            <div class="form-group" id="event-player-number-group">
-                <label for="event-player-number">Dorsal</label>
-                <input type="number" id="event-player-number" placeholder="Ej: 10">
-            </div>
-            <div class="modal-buttons">
-                <button id="event-input-cancel-btn" class="btn">Cancelar</button>
-                <button id="event-input-ok-btn" class="btn">Añadir Evento</button>
-            </div>
-        </div>
-    </div>
-
     <div id="spinner" class="spinner"></div>
     <script type="module">
-        import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc, query, orderBy } from "./firebase-config.js";
+        // Importa las funciones y variables desde el archivo de configuración de Firebase
+        import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc } from "./firebase-config.js";
 
+        // Variables de estado
         let currentLiveMatchId = null;
         let matchTimerInterval = null;
-        let matchStartTime = null;
-        let isMatchPaused = false;
 
+        // Se ejecuta solo cuando el DOM (la estructura HTML) ha sido completamente cargado.
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM Cargado. Esperando autenticación de Firebase.");
 
+            // Selectores de elementos
             const sections = document.querySelectorAll('section');
             const navButtons = document.querySelectorAll('.nav-btn');
             const liveMatchesContainer = document.getElementById('live-matches-container');
@@ -792,6 +670,7 @@
             const addMatchBtn = document.getElementById('add-match-btn');
             const spinner = document.getElementById('spinner');
 
+            // Funciones de utilidad para la UI
             function showSection(sectionId) {
                 sections.forEach(section => {
                     section.style.display = 'none';
@@ -813,7 +692,7 @@
                 }
             }
 
-            window.hideModal = (type) => {
+            function hideModal(type) {
                 const modal = document.getElementById(`${type}-modal`);
                 if (modal) {
                     modal.style.display = 'none';
@@ -821,29 +700,27 @@
                 if (type === 'control' && matchTimerInterval) {
                     clearInterval(matchTimerInterval);
                     matchTimerInterval = null;
-                    isMatchPaused = false;
-                    matchStartTime = null;
                 }
-                if (type === 'events') {
-                    // Limpiar eventos al cerrar el modal
-                    document.getElementById('team1-events').innerHTML = '<h4>Eventos de <span id="team1-events-name"></span></h4>';
-                    document.getElementById('team2-events').innerHTML = '<h4>Eventos de <span id="team2-events-name"></span></h4>';
-                }
-            };
-            
+                currentLiveMatchId = null;
+            }
+
             function showSpinner() { spinner.style.display = 'flex'; }
             function hideSpinner() { spinner.style.display = 'none'; }
             function showMessage(title, message) { showModal('message', title, message); }
             
-            async function updateMatchState(matchId, updates, eventData = null, isLive = true) {
+            // Función para actualizar el estado del partido en Firestore
+            async function updateMatchState(matchId, updates, eventDesc = "", isLive = true) {
                 if (!db) { showMessage("Error", "La base de datos no está disponible. Intenta refrescar la página."); return; }
                 showSpinner();
                 try {
                     const matchRef = doc(collection(db, `matches`), matchId);
-                    await updateDoc(matchRef, { ...updates });
-                    if (eventData) {
+                    await updateDoc(matchRef, { ...updates, isLive: isLive });
+                    if (eventDesc) {
                         const eventRef = collection(db, `matches/${matchId}/events`);
-                        await addDoc(eventRef, { ...eventData, timestamp: new Date() });
+                        await addDoc(eventRef, {
+                            description: eventDesc,
+                            timestamp: new Date()
+                        });
                     }
                 } catch (e) {
                     console.error("Error al actualizar el estado del partido: ", e);
@@ -853,6 +730,7 @@
                 }
             }
 
+            // Función para renderizar los partidos
             function renderMatches(container, matches) {
                 container.innerHTML = '';
                 if (matches.length === 0) {
@@ -862,31 +740,6 @@
                 matches.forEach(match => {
                     const matchElement = document.createElement('div');
                     matchElement.className = 'live-match-card';
-                    let buttonsHTML = '';
-                    let matchInfoHTML = '';
-
-                    if (match.isLive) {
-                        matchInfoHTML = `<div class="match-time" style="font-weight:bold; font-size: 1.2em; text-align:center;">${match.time}</div>`;
-                    } else if (match.isFinished) {
-                        matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-check-circle" style="color: #28A745;"></i> Finalizado</div>`;
-                    } else if (match.isSuspended) {
-                         matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-exclamation-triangle" style="color: #FFC107;"></i> ${match.suspensionReason}</div>`;
-                    } else if (match.isPaused) {
-                         matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-pause" style="color: #FFC107;"></i> Descanso</div>`;
-                    } else {
-                        matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-tag"></i> ${match.stage} - ${match.leg}</div>`;
-                    }
-                    
-                    if (isAdmin) {
-                        if (match.isLive) {
-                            buttonsHTML = `<button class="btn finalize-btn red" data-match-id="${match.id}">Finalizar</button>`;
-                        } else if (match.isFinished) {
-                            buttonsHTML = `<button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>`;
-                        } else {
-                            buttonsHTML = `<button class="btn activate-btn" data-match-id="${match.id}">Activar Partido</button>`;
-                        }
-                    }
-
                     matchElement.innerHTML = `
                         <div class="match-header">
                             <div class="team">
@@ -903,14 +756,15 @@
                                 <span class="team-name">${match.team2.name}</span>
                             </div>
                         </div>
-                        <div class="match-details" style="display:flex; flex-direction: column; align-items: center; gap: 10px;">
-                            ${matchInfoHTML}
-                            <div class="match-date" style="font-size: 0.9em;">
+                        <div class="match-details">
+                            <div class="match-time">Tiempo: <span>${match.time}</span></div>
+                            <div class="match-date">
                                 <i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleDateString()}</span>
                             </div>
                         </div>
-                        <div class="admin-actions" style="display:none; justify-content: center; margin-top: 15px;">
-                            ${buttonsHTML}
+                        <div class="admin-actions" style="display:none;">
+                            <button class="btn control-btn" data-match-id="${match.id}">Controlar</button>
+                            <button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>
                         </div>
                     `;
                     container.appendChild(matchElement);
@@ -918,6 +772,7 @@
                 updateAdminView();
             }
 
+            // Manejo de eventos de la UI
             navButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const sectionId = e.currentTarget.dataset.section;
@@ -927,8 +782,9 @@
                 });
             });
 
+            // Lógica de administrador
             let isAdmin = false;
-            const ADMIN_PASSWORD = "adminpass";
+            const ADMIN_PASSWORD = "adminpass"; // Contraseña de admin estática
 
             loginBtn.addEventListener('click', () => {
                 if (adminPasswordInput.value === ADMIN_PASSWORD) {
@@ -949,58 +805,41 @@
                 });
             }
 
+            // Lógica de Firebase
+            // Se usa onAuthStateChanged para asegurarse de que Firebase está listo y autenticado
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     console.log("Autenticación de Firebase lista. Conectando a la base de datos.");
                     const matchesRef = collection(db, `matches`);
                     
+                    // Listener para todos los partidos (en vivo, próximos, finalizados)
                     onSnapshot(matchesRef, (snapshot) => {
-                        const allMatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const liveMatches = [];
+                        const upcomingMatches = [];
+                        const finishedMatches = [];
 
-                        const liveMatches = allMatches.filter(match => match.isLive);
-                        const upcomingMatches = allMatches.filter(match => !match.isLive && !match.isFinished);
-                        const finishedMatches = allMatches.filter(match => match.isFinished);
+                        snapshot.docs.forEach(doc => {
+                            const matchData = { id: doc.id, ...doc.data() };
+                            if (matchData.isLive) {
+                                liveMatches.push(matchData);
+                            } else if (matchData.isFinished) {
+                                finishedMatches.push(matchData);
+                            } else {
+                                upcomingMatches.push(matchData);
+                            }
+                        });
 
                         renderMatches(liveMatchesContainer, liveMatches);
                         renderMatches(upcomingMatchesContainer, upcomingMatches);
                         renderMatches(finishedMatchesContainer, finishedMatches);
                         updateAdminView();
-                        
-                        const tabButtons = document.querySelectorAll('.tab-btn');
-                        const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-                        filterUpcomingMatches(activeTab, upcomingMatches);
                     });
                 } else {
                     console.log("Usuario no autenticado. La aplicación se ejecutará en modo solo lectura.");
                 }
             });
 
-            document.querySelectorAll('.tab-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    
-                    const tabType = e.target.dataset.tab;
-                    onSnapshot(collection(db, `matches`), (snapshot) => {
-                        const upcomingMatches = snapshot.docs
-                            .map(doc => ({ id: doc.id, ...doc.data() }))
-                            .filter(match => !match.isLive && !match.isFinished);
-                        filterUpcomingMatches(tabType, upcomingMatches);
-                    });
-                });
-            });
-
-            function filterUpcomingMatches(tabType, matches) {
-                const container = document.getElementById('upcoming-matches-container');
-                let filteredMatches;
-                if (tabType === 'Fechas') {
-                    filteredMatches = matches;
-                } else {
-                    filteredMatches = matches.filter(match => match.type === tabType);
-                }
-                renderMatches(container, filteredMatches);
-            }
-
+            // Añadir nuevo partido
             addMatchBtn.addEventListener('click', async () => {
                 if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
                 showSpinner();
@@ -1011,8 +850,6 @@
                 const matchDate = document.getElementById('match-date').value;
                 const matchTime = document.getElementById('match-time').value;
                 const matchType = document.getElementById('match-type').value;
-                const matchStage = document.getElementById('match-stage').value;
-                const matchLeg = document.getElementById('match-leg').value;
 
                 if (!team1Name || !team2Name || !matchDate || !matchTime) {
                     showMessage("Error", "Por favor, completa todos los campos del formulario.");
@@ -1026,18 +863,12 @@
                         team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
                         date: new Date(`${matchDate}T${matchTime}`).toISOString(),
                         type: matchType,
-                        stage: matchStage,
-                        leg: matchLeg,
                         score1: 0,
                         score2: 0,
                         isLive: false,
                         isFinished: false,
                         time: '00:00',
-                        isPaused: false,
-                        isSuspended: false,
-                        suspensionReason: '',
-                        startTime: null,
-                        elapsedTime: 0
+                        events: []
                     });
                     showMessage("Éxito", "Partido añadido correctamente.");
                 } catch (e) {
@@ -1048,8 +879,11 @@
                 }
             });
 
+            // Control de partido (modal)
+            let matchTimerStart = null;
+            
             document.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('activate-btn')) {
+                if (e.target.classList.contains('control-btn')) {
                     const matchId = e.target.dataset.matchId;
                     if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
                     showSpinner();
@@ -1059,18 +893,53 @@
                         if (docSnap.exists()) {
                             const matchData = docSnap.data();
                             currentLiveMatchId = matchId;
+                            // Actualizar el estado a 'en vivo' si no lo está
                             if (!matchData.isLive) {
-                                await updateDoc(matchRef, {
-                                    isLive: true,
-                                    isFinished: false,
-                                    isPaused: false,
-                                    isSuspended: false,
-                                    time: '00:00',
-                                    startTime: new Date().getTime(),
-                                    elapsedTime: 0
-                                });
+                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00' });
+                                // Establecer la hora de inicio en Firestore si es la primera vez que se controla
+                                await updateDoc(matchRef, { startTime: new Date().getTime() });
                             }
-                            setupMatchControl(matchId, matchData);
+                            // Iniciar el modal y el timer
+                            showModal('control', 'Control de Partido', '');
+                            document.getElementById('control-team1-name').textContent = matchData.team1.name;
+                            document.getElementById('control-team2-name').textContent = matchData.team2.name;
+                            document.getElementById('control-team1-shield').src = matchData.team1.shield;
+                            document.getElementById('control-team2-shield').src = matchData.team2.shield;
+                            document.getElementById('control-team1-score').textContent = matchData.score1;
+                            document.getElementById('control-team2-score').textContent = matchData.score2;
+                            document.getElementById('control-match-date').textContent = new Date(matchData.date).toLocaleDateString();
+
+                            // Iniciar el listener del timer para actualizar el tiempo en tiempo real
+                            onSnapshot(matchRef, (doc) => {
+                                const data = doc.data();
+                                document.getElementById('control-team1-score').textContent = data.score1;
+                                document.getElementById('control-team2-score').textContent = data.score2;
+                                if (data.startTime) {
+                                    matchTimerStart = data.startTime;
+                                    if (matchTimerInterval) clearInterval(matchTimerInterval);
+                                    matchTimerInterval = setInterval(() => {
+                                        const now = new Date().getTime();
+                                        const elapsed = Math.floor((now - matchTimerStart) / 1000);
+                                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                                        const seconds = (elapsed % 60).toString().padStart(2, '0');
+                                        document.getElementById('control-match-time').textContent = `${minutes}:${seconds}`;
+                                    }, 1000);
+                                }
+                            });
+                            // Iniciar el listener para el log de eventos
+                            const eventsRef = collection(db, `matches/${matchId}/events`);
+                            onSnapshot(eventsRef, (eventSnapshot) => {
+                                const eventLogList = document.getElementById('event-log');
+                                eventLogList.innerHTML = '';
+                                eventSnapshot.docs.forEach(eventDoc => {
+                                    const eventData = eventDoc.data();
+                                    const li = document.createElement('li');
+                                    li.textContent = eventData.description;
+                                    eventLogList.appendChild(li);
+                                });
+                                // Scroll al final
+                                eventLogList.scrollTop = eventLogList.scrollHeight;
+                            });
                         }
                     } catch (e) {
                         console.error("Error al obtener datos del partido: ", e);
@@ -1095,331 +964,87 @@
                             hideModal('confirm');
                         }
                     });
-                } else if (e.target.classList.contains('finalize-btn')) {
-                    const matchId = e.target.dataset.matchId;
-                    showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? Se moverá a la sección de Partidos Finalizados.', async () => {
-                         if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                         showSpinner();
-                         try {
-                            await updateMatchState(matchId, { isLive: false, isFinished: true, isPaused: false, isSuspended: false, time: 'Finalizado' }, {description: "Partido Finalizado"}, false);
-                         } catch (e) {
-                             console.error("Error al finalizar partido: ", e);
-                             showMessage("Error", "No se pudo finalizar el partido.");
-                         } finally {
-                             hideSpinner();
-                             hideModal('confirm');
-                         }
-                    });
-                } else if (e.target.dataset.eventType && currentLiveMatchId) {
-                    const eventType = e.target.dataset.eventType;
-                    const teamId = e.target.dataset.teamId;
-                    const eventRequiresPlayerInfo = ["gol", "tiro-libre", "penal", "cambio", "lesion", "tarjeta-amarilla", "tarjeta-roja"];
-
-                    if (eventRequiresPlayerInfo.includes(eventType)) {
-                        showModal('event-input', `${e.target.textContent}`, '');
-                        document.getElementById('event-input-ok-btn').onclick = async () => {
-                            const playerName = document.getElementById('event-player-name').value;
-                            const playerNumber = document.getElementById('event-player-number').value;
-
-                            if (!playerName) {
-                                showMessage("Error", "El nombre del jugador es requerido para este evento.");
-                                return;
-                            }
-
-                            let eventDesc = "";
-                            const matchRef = doc(db, `matches`, currentLiveMatchId);
-                            const docSnap = await getDoc(matchRef);
-                            const matchData = docSnap.data();
-
-                            const teamName = teamId === '1' ? matchData.team1.name : matchData.team2.name;
-                            
-                            switch (eventType) {
-                                case 'gol':
-                                    await updateMatchState(currentLiveMatchId, { [`score${teamId}`]: matchData[`score${teamId}`] + 1 }, {description: `¡Gol de ${playerName} (#${playerNumber || 'N/A'}) para ${teamName}!`});
-                                    break;
-                                case 'tiro-libre':
-                                    eventDesc = `Tiro libre para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'penal':
-                                    eventDesc = `Penal para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'cambio':
-                                    eventDesc = `Cambio en ${teamName}: ${playerName} (#${playerNumber || 'N/A'}) ingresa al campo.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'lesion':
-                                    eventDesc = `Lesión de ${playerName} (#${playerNumber || 'N/A'}) en ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'tarjeta-amarilla':
-                                    eventDesc = `Tarjeta Amarilla para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'tarjeta-roja':
-                                    eventDesc = `Tarjeta Roja para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                            }
-
-                            hideModal('event-input');
-                        };
-                    } else {
-                        // Eventos sin info adicional
-                        let eventDesc = "";
-                        switch (eventType) {
-                            case 'travesano':
-                                eventDesc = '¡El balón pega en el travesaño!';
-                                break;
-                            case 'errado':
-                                eventDesc = '¡El jugador falla el disparo!';
-                                break;
-                        }
-                        await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                    }
                 }
             });
 
-            document.getElementById('pause-match-btn').addEventListener('click', async () => {
+            // Controladores de los botones del modal de control
+            document.getElementById('control-add-goal1').addEventListener('click', async () => {
                 if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(db, `matches`, currentLiveMatchId);
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
                 const docSnap = await getDoc(matchRef);
-                const matchData = docSnap.data();
-                if (!matchData.isPaused) {
-                    await updateMatchState(currentLiveMatchId, {isPaused: true, isLive: false, suspensionReason: 'Descanso'});
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score1;
+                    await updateMatchState(currentLiveMatchId, { score1: currentScore + 1 }, "¡Gol del Equipo 1!");
                 }
             });
-
-            document.getElementById('resume-match-btn').addEventListener('click', async () => {
+            document.getElementById('control-add-goal2').addEventListener('click', async () => {
                 if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(db, `matches`, currentLiveMatchId);
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
                 const docSnap = await getDoc(matchRef);
-                const matchData = docSnap.data();
-                if (matchData.isPaused || matchData.isSuspended) {
-                    const newStartTime = new Date().getTime() - matchData.elapsedTime;
-                    await updateMatchState(currentLiveMatchId, {
-                        isPaused: false,
-                        isSuspended: false,
-                        isLive: true,
-                        suspensionReason: '',
-                        startTime: newStartTime
-                    });
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score2;
+                    await updateMatchState(currentLiveMatchId, { score2: currentScore + 1 }, "¡Gol del Equipo 2!");
                 }
             });
-
-            document.getElementById('suspend-match-btn').addEventListener('click', async () => {
+            document.getElementById('control-add-yellow1').addEventListener('click', async () => {
                 if (!currentLiveMatchId || !db) return;
-                const reason = prompt("Por favor, introduce el motivo de la suspensión:");
-                if (reason) {
-                    await updateMatchState(currentLiveMatchId, {isSuspended: true, isLive: false, suspensionReason: reason});
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team1.name}.`);
                 }
             });
-
+            document.getElementById('control-add-red1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team1.name}.`);
+                }
+            });
+            document.getElementById('control-add-yellow2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
+            document.getElementById('control-add-red2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
+            document.getElementById('add-event-btn').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                const eventDesc = document.getElementById('player-event-input').value;
+                if (eventDesc) {
+                    await updateMatchState(currentLiveMatchId, {}, eventDesc);
+                    document.getElementById('player-event-input').value = '';
+                } else {
+                    showMessage("Error", "Por favor, ingresa una descripción para el evento.");
+                }
+            });
             document.getElementById('end-match-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
                 showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
-                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true, isPaused: false, isSuspended: false, suspensionReason: '', time: 'Finalizado' });
+                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, 'Partido Finalizado');
                     hideModal('confirm');
                     hideModal('control');
                 });
             });
 
-            function setupMatchControl(matchId, matchData) {
-                currentLiveMatchId = matchId;
-                showModal('control', 'Control de Partido', '');
-                document.getElementById('control-team1-name').textContent = matchData.team1.name;
-                document.getElementById('control-team2-name').textContent = matchData.team2.name;
-                document.getElementById('control-team1-shield').src = matchData.team1.shield;
-                document.getElementById('control-team2-shield').src = matchData.team2.shield;
-                document.getElementById('control-team1-score').textContent = matchData.score1;
-                document.getElementById('control-team2-score').textContent = matchData.score2;
-                document.getElementById('match-stage-info').textContent = matchData.stage;
-                document.getElementById('match-leg-info').textContent = matchData.leg;
-
-                const matchRef = doc(db, `matches`, matchId);
-                onSnapshot(matchRef, (doc) => {
-                    const data = doc.data();
-                    document.getElementById('control-team1-score').textContent = data.score1;
-                    document.getElementById('control-team2-score').textContent = data.score2;
-
-                    const timerDisplay = document.getElementById('match-time-display');
-                    const infoStatus = document.getElementById('match-info-status');
-                    const suspensionInfo = document.getElementById('suspension-info');
-                    const pauseBtn = document.getElementById('pause-match-btn');
-                    const resumeBtn = document.getElementById('resume-match-btn');
-
-                    if (data.isLive) {
-                        infoStatus.style.display = 'block';
-                        suspensionInfo.style.display = 'none';
-                        pauseBtn.style.display = 'inline-block';
-                        resumeBtn.style.display = 'none';
-                        if (!matchTimerInterval) {
-                             matchStartTime = data.startTime;
-                             matchTimerInterval = setInterval(() => {
-                                const now = new Date().getTime();
-                                const elapsed = Math.floor((now - matchStartTime) / 1000) + (data.elapsedTime / 1000);
-                                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                                const seconds = (elapsed % 60).toString().padStart(2, '0');
-                                timerDisplay.textContent = `${minutes}:${seconds}`;
-                                updateDoc(matchRef, {time: `${minutes}:${seconds}`, elapsedTime: elapsed * 1000});
-                            }, 1000);
-                        }
-                    } else if (data.isPaused) {
-                        infoStatus.style.display = 'none';
-                        suspensionInfo.style.display = 'block';
-                        document.getElementById('suspension-reason').textContent = 'Descanso';
-                        timerDisplay.textContent = data.time;
-                        pauseBtn.style.display = 'none';
-                        resumeBtn.style.display = 'inline-block';
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                    } else if (data.isSuspended) {
-                        infoStatus.style.display = 'none';
-                        suspensionInfo.style.display = 'block';
-                        document.getElementById('suspension-reason').textContent = `Suspendido: ${data.suspensionReason}`;
-                        timerDisplay.textContent = data.time;
-                        pauseBtn.style.display = 'none';
-                        resumeBtn.style.display = 'inline-block';
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                    } else {
-                        infoStatus.style.display = 'block';
-                        suspensionInfo.style.display = 'none';
-                        timerDisplay.textContent = data.time;
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                        hideModal('control');
-                    }
-                });
-
-                const eventsRef = query(collection(db, `matches/${matchId}/events`), orderBy("timestamp", "desc"));
-                onSnapshot(eventsRef, (eventSnapshot) => {
-                    const team1EventsContainer = document.getElementById('team1-events');
-                    const team2EventsContainer = document.getElementById('team2-events');
-                    team1EventsContainer.innerHTML = '';
-                    team2EventsContainer.innerHTML = '';
-
-                    eventSnapshot.docs.forEach(eventDoc => {
-                        const eventData = eventDoc.data();
-                        const li = document.createElement('div');
-                        li.className = 'event-log-item';
-                        li.innerHTML = `<strong>${eventData.description}</strong><span>${new Date(eventData.timestamp.toDate()).toLocaleTimeString()}</span>`;
-                        if (eventData.teamId === '1') {
-                             li.classList.add('team1');
-                             team1EventsContainer.appendChild(li);
-                        } else {
-                             li.classList.add('team2');
-                             team2EventsContainer.appendChild(li);
-                        }
-                    });
-                });
-
-                document.getElementById('control-close-btn').addEventListener('click', () => {
-                    hideModal('control');
-                });
-            }
-
-            document.getElementById('events-modal-btn').addEventListener('click', async () => {
-                if (currentLiveMatchId) {
-                    const matchRef = doc(db, `matches`, currentLiveMatchId);
-                    const docSnap = await getDoc(matchRef);
-                    if (docSnap.exists()) {
-                        const matchData = docSnap.data();
-                        document.getElementById('team1-events-name').textContent = matchData.team1.name;
-                        document.getElementById('team2-events-name').textContent = matchData.team2.name;
-                        showModal('events', 'Eventos del Partido', '');
-                    }
-                } else {
-                    showMessage('Error', 'No hay un partido activo para mostrar los eventos.');
-                }
-            });
-
-            // Handlers para los botones de evento dentro del modal de control
-            document.querySelectorAll('.player-event-controls button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const eventType = e.currentTarget.dataset.eventType;
-                    const teamId = e.currentTarget.dataset.teamId;
-                    const eventRequiresPlayerInfo = ["gol", "tiro-libre", "penal", "cambio", "lesion", "tarjeta-amarilla", "tarjeta-roja"];
-
-                    if (eventRequiresPlayerInfo.includes(eventType)) {
-                        document.getElementById('event-input-title').textContent = e.currentTarget.textContent;
-                        document.getElementById('event-player-number-group').style.display = eventType === "cambio" ? 'none' : 'block';
-                        showModal('event-input', 'Añadir Evento', '');
-                        
-                        document.getElementById('event-input-ok-btn').onclick = async () => {
-                            const playerName = document.getElementById('event-player-name').value;
-                            const playerNumber = document.getElementById('event-player-number').value;
-
-                            if (!playerName) {
-                                showMessage("Error", "El nombre del jugador es requerido.");
-                                return;
-                            }
-
-                            const matchRef = doc(db, `matches`, currentLiveMatchId);
-                            const docSnap = await getDoc(matchRef);
-                            const matchData = docSnap.data();
-                            const teamName = teamId === '1' ? matchData.team1.name : matchData.team2.name;
-                            const time = document.getElementById('match-time-display').textContent;
-
-                            let eventDesc = "";
-                            switch (eventType) {
-                                case 'gol':
-                                    await updateMatchState(currentLiveMatchId, { [`score${teamId}`]: matchData[`score${teamId}`] + 1 }, {description: `¡Gol de ${playerName} (#${playerNumber || 'N/A'}) para ${teamName}!`});
-                                    break;
-                                case 'tiro-libre':
-                                    eventDesc = `Tiro libre para ${teamName}: ${playerName} (#${playerNumber || 'N/A'})`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'penal':
-                                    eventDesc = `Penal para ${teamName}: ${playerName} (#${playerNumber || 'N/A'})`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'cambio':
-                                    eventDesc = `Cambio en ${teamName}: Ingresa ${playerName} (#${playerNumber || 'N/A'})`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'lesion':
-                                    eventDesc = `Lesión de ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'tarjeta-amarilla':
-                                    eventDesc = `Tarjeta Amarilla para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                                case 'tarjeta-roja':
-                                    eventDesc = `Tarjeta Roja para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
-                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                                    break;
-                            }
-                            hideModal('event-input');
-                        };
-                    } else {
-                        // Eventos sin info adicional
-                        let eventDesc = "";
-                        switch (eventType) {
-                            case 'travesano':
-                                eventDesc = '¡El balón pega en el travesaño!';
-                                break;
-                            case 'errado':
-                                eventDesc = '¡El jugador falla el disparo!';
-                                break;
-                        }
-                        await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
-                    }
-                });
-            });
-
-            document.getElementById('event-input-cancel-btn').addEventListener('click', () => hideModal('event-input'));
+            // Controladores para los modales
             document.getElementById('modal-close-btn').addEventListener('click', () => hideModal('message'));
             document.getElementById('confirm-cancel-btn').addEventListener('click', () => hideModal('confirm'));
-            
+            document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
         });
     </script>
 </body>
