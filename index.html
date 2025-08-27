@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Soccer</title>
+    <title>App Oficial B17</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -478,67 +478,7 @@
                 display: none;
             }
         }
-    
-/* ==== Estilos adicionales ==== */
-#cronometro {
-  text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-  margin: 10px 0;
-  color: var(--primary-color);
-}
-.modal-overlay {
-  position: fixed;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-}
-.modal {
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-  text-align:center;
-  max-width:300px;
-}
-.modal button {
-  margin-top:15px;
-}
-.tab-content { display:none; }
-.tab-content.active { display:block; }
-
-
-/* ==== Estilos adicionales ==== */
-#cronometro {
-  text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-  margin: 10px 0;
-  color: var(--primary-color);
-}
-.event-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 8px 0;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  animation: fadeInUp 0.4s ease;
-}
-.event-card span {
-  margin-right: 8px;
-  font-size: 1.2em;
-}
-@keyframes fadeInUp {
-  from {opacity:0; transform: translateY(20px);}
-  to {opacity:1; transform: translateY(0);}
-}
-
-</style>
+    </style>
 </head>
 <body>
     <div class="container">
@@ -555,7 +495,6 @@
                     <h2>Partidos en Vivo</h2>
                     <i class="fas fa-futbol" style="font-size: 2em; color: var(--accent-color);"></i>
                 </div>
-                <div id="cronometro">00:00</div>
                 <div id="live-matches-container">
                     <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando partidos en vivo...</p>
                 </div>
@@ -629,104 +568,7 @@
                             </select>
                         </div>
                         <button id="add-match-btn" class="btn">Añadir Partido</button>
-                    
-<!-- ================= EXTRAS ADMIN (mejorados) ================= -->
-<div id="extras-admin" style="margin-top:20px;">
-  <h3>Controles Avanzados del Partido</h3>
-  <div class="form-container" style="background:white; padding:15px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <div class="form-group">
-      <label for="ubicacion">Ubicación</label>
-      <input id="ubicacion" placeholder="Ubicación" class="form-input">
-    </div>
-    <div class="form-group">
-      <label for="etapa">Etapa</label>
-      <input id="etapa" placeholder="Etapa" class="form-input">
-    </div>
-    <div class="form-group">
-      <label for="competicion">Competición</label>
-      <input id="competicion" placeholder="Competición" class="form-input">
-    </div>
-    <div class="form-group">
-      <label for="seccion">Sección</label>
-      <input id="seccion" placeholder="Sección" class="form-input">
-    </div>
-    <div class="form-group">
-      <label for="marcadorGlobal">Marcador Global</label>
-      <input id="marcadorGlobal" placeholder="Marcador Global" class="form-input">
-    </div>
-    <div class="form-group">
-      <label for="premarcadores">Pre-marcadores</label>
-      <input id="premarcadores" placeholder="Pre-marcadores" class="form-input">
-    </div>
-  </div>
-
-  <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px;">
-    <button class="btn" onclick="registrarEvento('Penal')">⚽ Penal</button>
-    <button class="btn" onclick="registrarEvento('Tiro Libre')">🎯 Tiro Libre</button>
-    <button class="btn" onclick="registrarEvento('Esquina')">📐 Esquina</button>
-    <button class="btn" onclick="registrarEvento('Travesaño')">🥅 Travesaño</button>
-    <button class="btn" onclick="registrarEvento('Errado')">❌ Errado</button>
-  </div>
-
-  <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px;">
-    <button class="btn" onclick="setPosesion('equipo1')">🔥 Posesión Equipo 1</button>
-    <button class="btn" onclick="setPosesion('equipo2')">🔥 Posesión Equipo 2</button>
-    <button class="btn" onclick="pausarPartido()">⏸️ Descanso/Pausa</button>
-    <button class="btn" onclick="reanudarPartido()">▶️ Reanudar</button>
-    <button class="btn red" onclick="suspenderPartido()">⛔ Suspender</button>
-    <input id="motivoSuspension" placeholder="Motivo de suspensión" class="form-input" style="flex:1;">
-  </div>
-
-  <div class="events-wrap" style="margin-top:20px; display:flex; gap:20px; flex-wrap:wrap;">
-    <div class="events-column" id="eventosEquipo1" style="flex:1; min-width:250px; background:white; padding:15px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-      <h4 style="color:var(--primary-color); margin-top:0;">Eventos Equipo 1</h4>
-    </div>
-    <div class="events-column" id="eventosEquipo2" style="flex:1; min-width:250px; background:white; padding:15px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-      <h4 style="color:var(--primary-color); margin-top:0;">Eventos Equipo 2</h4>
-    </div>
-  </div>
-</div>
-
-<script>
-// ================= FUNCIONES ADMIN EXTRA =================
-function registrarEvento(tipo) {
-  const evento = { tipo, timestamp: new Date().toLocaleTimeString() };
-  const targetCol = Math.random() > 0.5 ? document.getElementById('eventosEquipo1') : document.getElementById('eventosEquipo2');
-  const card = document.createElement('div');
-  card.className = 'event-card';
-  card.innerHTML = \`<div class="event-icon">⚽</div><div class="event-desc">\${tipo}</div><div class="event-time">\${evento.timestamp}</div>\`;
-  targetCol.appendChild(card);
-}
-
-function setPosesion(equipo) {
-  console.log("Posesión:", equipo);
-}
-function pausarPartido() { console.log("Partido en pausa"); }
-function reanudarPartido() { console.log("Partido reanudado"); }
-function suspenderPartido() {
-  const motivo = document.getElementById('motivoSuspension').value;
-  console.log("Partido suspendido. Motivo:", motivo);
-}
-
-// Animación tarjetas evento
-const style = document.createElement('style');
-style.innerHTML = \`
-.event-card {
-  display:flex; align-items:center; gap:10px;
-  background: linear-gradient(180deg,#ffffff,#f5f9ff);
-  border-radius:10px; padding:10px; margin-top:8px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.08);
-  transform:translateY(10px); opacity:0;
-  animation:slideIn .4s forwards;
-}
-.event-icon { font-size:18px; background:#e8f0ff; padding:6px 10px; border-radius:6px; color:var(--primary-color); }
-.event-desc { flex:1; font-weight:600; }
-.event-time { font-size:12px; color:gray; }
-@keyframes slideIn { to { transform:translateY(0); opacity:1; } }
-\`;
-document.head.appendChild(style);
-</script>
-
+                    </div>
                 </div>
             </section>
         </main>
@@ -752,6 +594,7 @@ document.head.appendChild(style);
     </div>
     <div id="match-control-modal" class="modal-overlay">
         <div class="modal-content">
+            <h3 id="control-modal-title">Control de Partido</h3>
             <div id="control-match-card" class="live-match-card">
                 <div class="match-header">
                     <div class="team">
@@ -1036,6 +879,7 @@ document.head.appendChild(style);
                 }
             });
 
+            // Control de partido (modal)
             let matchTimerStart = null;
             
             document.addEventListener('click', async (e) => {
@@ -1056,6 +900,7 @@ document.head.appendChild(style);
                                 await updateDoc(matchRef, { startTime: new Date().getTime() });
                             }
                             // Iniciar el modal y el timer
+                            showModal('control', 'Control de Partido', '');
                             document.getElementById('control-team1-name').textContent = matchData.team1.name;
                             document.getElementById('control-team2-name').textContent = matchData.team2.name;
                             document.getElementById('control-team1-shield').src = matchData.team1.shield;
@@ -1202,5 +1047,5 @@ document.head.appendChild(style);
             document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
         });
     </script>
-
-
+</body>
+</html>
