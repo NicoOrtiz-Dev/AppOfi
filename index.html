@@ -163,27 +163,7 @@
         .btn.red:hover {
             box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
         }
-        
-        .btn.yellow {
-            background-color: #ffc107;
-            background: linear-gradient(90deg, #ffc107, #e0a800);
-            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
-        }
-        
-        .btn.yellow:hover {
-             box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
-        }
-        
-        .btn.blue {
-            background-color: #007bff;
-            background: linear-gradient(90deg, #007bff, #0069d9);
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-        }
-        
-        .btn.blue:hover {
-            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
-        }
-        
+
         .live-match-card {
             background-color: white;
             padding: 25px;
@@ -502,7 +482,6 @@
             animation: eventSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
             border-left: 4px solid var(--primary-color);
             transition: all 0.3s ease;
-            position: relative;
         }
 
         @keyframes eventSlideIn {
@@ -529,11 +508,7 @@
             font-size: 0.9em;
             color: rgba(0, 0, 0, 0.6);
         }
-        
-        .event-log-item.event-gol { border-color: #28a745; }
-        .event-log-item.event-roja { border-color: #dc3545; }
-        .event-log-item.event-amarilla { border-color: #ffc107; }
-        
+
         .spinner {
             border: 4px solid rgba(0, 0, 0, .1);
             width: 36px;
@@ -558,38 +533,6 @@
             .nav-btn span {
                 display: none;
             }
-            .events-container {
-                flex-direction: column;
-            }
-            .events-column {
-                min-width: auto;
-            }
-        }
-        
-        #match-time-display {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--text-color);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .live-status {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #E64A19;
-            margin-top: 10px;
-            text-align: center;
-        }
-        
-        .player-event-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .player-event-controls .btn {
-            font-size: 0.8em;
-            padding: 8px 10px;
         }
     </style>
 </head>
@@ -685,7 +628,7 @@
                         <div class="form-group">
                             <label for="match-leg">Partido de Ida/Vuelta</label>
                             <select id="match-leg">
-                                <option value="Único">Partido Único</option>
+                                <option value="Unico">Partido Único</option>
                                 <option value="Ida">Ida</option>
                                 <option value="Vuelta">Vuelta</option>
                             </select>
@@ -745,52 +688,43 @@
                         <span id="control-team2-name" class="team-name">Equipo 2</span>
                     </div>
                 </div>
-                 <div class="match-details" style="justify-content: center; flex-direction: column; align-items: center; gap: 5px;">
-                    <div id="match-info-display">
-                        <span id="match-stage-info" style="font-weight: bold;"></span> - <span id="match-leg-info" style="font-weight: bold;"></span>
+                <div class="match-details" style="justify-content: center; flex-direction: column; text-align: center;">
+                    <div class="match-info" id="match-info-status">
+                        <i class="fas fa-tag"></i> <span id="match-stage-info">Etapa:</span> - <span id="match-leg-info">Tipo:</span>
                     </div>
-                    <div id="suspension-info" style="display: none; font-weight: bold; color: #dc3545;">
-                        <i class="fas fa-exclamation-triangle"></i> <span id="suspension-reason"></span>
-                    </div>
-                    <div id="live-status-info" style="display: none; font-weight: bold; color: #28a745;">
-                        <i class="fas fa-circle-play"></i> En Vivo
-                    </div>
-                    <div id="paused-info" style="display: none; font-weight: bold; color: #ffc107;">
-                        <i class="fas fa-pause"></i> Descanso
-                    </div>
-                    <div id="match-time-display" style="font-size: 1.8em; font-weight: bold; margin-top: 10px;">
+                    <div class="match-time" id="match-time-display" style="font-size: 1.5em; font-weight: bold; margin-top: 10px;">
                         00:00
+                    </div>
+                    <div class="match-info" id="suspension-info" style="display: none;">
+                        <i class="fas fa-exclamation-triangle" style="color: #FFC107;"></i> <span id="suspension-reason"></span>
                     </div>
                 </div>
                 <div class="admin-controls">
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="display: flex; justify-content: space-around; gap: 10px;">
-                            <button id="add-goal1-btn" class="btn blue" data-event-type="gol" data-team-id="1">Gol Eq. 1</button>
-                            <button id="add-goal2-btn" class="btn blue" data-event-type="gol" data-team-id="2">Gol Eq. 2</button>
-                        </div>
-                        <div class="player-event-controls">
-                            <button class="btn yellow" data-event-type="tarjeta-amarilla" data-team-id="1"><i class="fas fa-credit-card"></i> Amarilla Eq. 1</button>
-                            <button class="btn yellow" data-event-type="tarjeta-amarilla" data-team-id="2"><i class="fas fa-credit-card"></i> Amarilla Eq. 2</button>
-                            <button class="btn red" data-event-type="tarjeta-roja" data-team-id="1"><i class="fas fa-credit-card"></i> Roja Eq. 1</button>
-                            <button class="btn red" data-event-type="tarjeta-roja" data-team-id="2"><i class="fas fa-credit-card"></i> Roja Eq. 2</button>
-                            <button class="btn" data-event-type="tiro-libre" data-team-id="1">Tiro Libre Eq. 1</button>
-                            <button class="btn" data-event-type="tiro-libre" data-team-id="2">Tiro Libre Eq. 2</button>
-                            <button class="btn" data-event-type="penal" data-team-id="1">Penal Eq. 1</button>
-                            <button class="btn" data-event-type="penal" data-team-id="2">Penal Eq. 2</button>
-                            <button class="btn" data-event-type="cambio" data-team-id="1"><i class="fas fa-exchange-alt"></i> Cambio Eq. 1</button>
-                            <button class="btn" data-event-type="cambio" data-team-id="2"><i class="fas fa-exchange-alt"></i> Cambio Eq. 2</button>
-                            <button class="btn" data-event-type="lesion" data-team-id="1"><i class="fas fa-medkit"></i> Lesión Eq. 1</button>
-                            <button class="btn" data-event-type="lesion" data-team-id="2"><i class="fas fa-medkit"></i> Lesión Eq. 2</button>
-                            <button class="btn" data-event-type="travesano"><i class="fas fa-times"></i> Travesaño</button>
-                            <button class="btn" data-event-type="errado"><i class="fas fa-times-circle"></i> Errado</button>
-                        </div>
+                    <div class="score-controls">
+                        <button id="add-goal1-btn" class="btn" data-event-type="gol" data-team-id="1">Gol Eq. 1</button>
+                        <button id="add-goal2-btn" class="btn" data-event-type="gol" data-team-id="2">Gol Eq. 2</button>
                     </div>
-                    <div style="display: flex; justify-content: space-around; gap: 10px; margin-top: 10px;">
-                        <button id="pause-match-btn" class="btn yellow"><i class="fas fa-pause"></i> Descanso</button>
+                    <div class="player-event-controls">
+                        <button id="freekick1-btn" class="btn" data-event-type="tiro-libre" data-team-id="1">Tiro Libre Eq. 1</button>
+                        <button id="freekick2-btn" class="btn" data-event-type="tiro-libre" data-team-id="2">Tiro Libre Eq. 2</button>
+                        <button id="penalty1-btn" class="btn" data-event-type="penal" data-team-id="1">Penal Eq. 1</button>
+                        <button id="penalty2-btn" class="btn" data-event-type="penal" data-team-id="2">Penal Eq. 2</button>
+                        <button id="yellow1-btn" class="btn" data-event-type="tarjeta-amarilla" data-team-id="1" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i> Amarilla Eq. 1</button>
+                        <button id="yellow2-btn" class="btn" data-event-type="tarjeta-amarilla" data-team-id="2" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i> Amarilla Eq. 2</button>
+                        <button id="red1-btn" class="btn red" data-event-type="tarjeta-roja" data-team-id="1"><i class="fas fa-credit-card"></i> Roja Eq. 1</button>
+                        <button id="red2-btn" class="btn red" data-event-type="tarjeta-roja" data-team-id="2"><i class="fas fa-credit-card"></i> Roja Eq. 2</button>
+                        <button id="change1-btn" class="btn" data-event-type="cambio" data-team-id="1"><i class="fas fa-exchange-alt"></i> Cambio Eq. 1</button>
+                        <button id="change2-btn" class="btn" data-event-type="cambio" data-team-id="2"><i class="fas fa-exchange-alt"></i> Cambio Eq. 2</button>
+                        <button id="injury1-btn" class="btn" data-event-type="lesion" data-team-id="1"><i class="fas fa-medkit"></i> Lesión Eq. 1</button>
+                        <button id="injury2-btn" class="btn" data-event-type="lesion" data-team-id="2"><i class="fas fa-medkit"></i> Lesión Eq. 2</button>
+                        <button id="crossbar-btn" class="btn" data-event-type="travesano"><i class="fas fa-times"></i> Travesaño</button>
+                        <button id="missed-btn" class="btn" data-event-type="errado"><i class="fas fa-times-circle"></i> Errado</button>
+                    </div>
+                    <div class="time-controls" style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                        <button id="pause-match-btn" class="btn" style="background-color: #FFC107;"><i class="fas fa-pause"></i> Descanso</button>
                         <button id="resume-match-btn" class="btn" style="display:none;"><i class="fas fa-play"></i> Reanudar</button>
-                        <button id="suspend-match-btn" class="btn red"><i class="fas fa-hand-paper"></i> Suspender</button>
+                        <button id="suspend-match-btn" class="btn red" style="background-color: #FF5722;"><i class="fas fa-hand-paper"></i> Suspender</button>
                         <button id="end-match-btn" class="btn red"><i class="fas fa-flag"></i> Finalizar</button>
-                        <button id="show-events-btn" class="btn blue"><i class="fas fa-list-ul"></i> Ver Eventos</button>
                     </div>
                 </div>
                 <div class="modal-buttons" style="justify-content: flex-end;">
@@ -814,7 +748,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal de confirmación para eventos con jugador -->
+    <!-- Modal de confirmación para eventos -->
     <div id="event-input-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-btn" onclick="hideModal('event-input')">&times;</button>
@@ -823,7 +757,7 @@
                 <label for="event-player-name">Nombre del Jugador</label>
                 <input type="text" id="event-player-name" placeholder="Ej: Lionel Messi">
             </div>
-            <div class="form-group">
+            <div class="form-group" id="event-player-number-group">
                 <label for="event-player-number">Dorsal</label>
                 <input type="number" id="event-player-number" placeholder="Ej: 10">
             </div>
@@ -891,6 +825,7 @@
                     matchStartTime = null;
                 }
                 if (type === 'events') {
+                    // Limpiar eventos al cerrar el modal
                     document.getElementById('team1-events').innerHTML = '<h4>Eventos de <span id="team1-events-name"></span></h4>';
                     document.getElementById('team2-events').innerHTML = '<h4>Eventos de <span id="team2-events-name"></span></h4>';
                 }
@@ -931,24 +866,24 @@
                     let matchInfoHTML = '';
 
                     if (match.isLive) {
-                        matchInfoHTML = `<div class="live-status"><i class="fas fa-circle-play"></i> En Vivo</div>`;
+                        matchInfoHTML = `<div class="match-time" style="font-weight:bold; font-size: 1.2em; text-align:center;">${match.time}</div>`;
                     } else if (match.isFinished) {
-                        matchInfoHTML = `<div class="match-info" style="text-align:center; font-weight: bold; color: #28a745;"><i class="fas fa-check-circle"></i> Finalizado</div>`;
+                        matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-check-circle" style="color: #28A745;"></i> Finalizado</div>`;
                     } else if (match.isSuspended) {
-                         matchInfoHTML = `<div class="match-info" style="text-align:center; font-weight: bold; color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ${match.suspensionReason}</div>`;
+                         matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-exclamation-triangle" style="color: #FFC107;"></i> ${match.suspensionReason}</div>`;
                     } else if (match.isPaused) {
-                         matchInfoHTML = `<div class="match-info" style="text-align:center; font-weight: bold; color: #ffc107;"><i class="fas fa-pause"></i> Descanso</div>`;
+                         matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-pause" style="color: #FFC107;"></i> Descanso</div>`;
                     } else {
-                        matchInfoHTML = `<div class="match-info" style="text-align:center; font-weight: bold;"><span style="color: #666">${match.stage}</span> - <span style="color: #666">${match.leg}</span></div>`;
+                        matchInfoHTML = `<div class="match-info" style="text-align:center;"><i class="fas fa-tag"></i> ${match.stage} - ${match.leg}</div>`;
                     }
                     
                     if (isAdmin) {
                         if (match.isLive) {
-                            buttonsHTML = `<button class="btn blue control-match-btn" data-match-id="${match.id}">Admin. Partido</button>`;
+                            buttonsHTML = `<button class="btn finalize-btn red" data-match-id="${match.id}">Finalizar</button>`;
                         } else if (match.isFinished) {
-                            buttonsHTML = `<button class="btn red delete-btn" data-match-id="${match.id}">Eliminar</button>`;
+                            buttonsHTML = `<button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>`;
                         } else {
-                            buttonsHTML = `<button class="btn blue activate-btn" data-match-id="${match.id}">Activar Partido</button>`;
+                            buttonsHTML = `<button class="btn activate-btn" data-match-id="${match.id}">Activar Partido</button>`;
                         }
                     }
 
@@ -970,7 +905,6 @@
                         </div>
                         <div class="match-details" style="display:flex; flex-direction: column; align-items: center; gap: 10px;">
                             ${matchInfoHTML}
-                            <div class="match-time" style="font-size: 1.2em;">${match.time}</div>
                             <div class="match-date" style="font-size: 0.9em;">
                                 <i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleDateString()}</span>
                             </div>
@@ -1115,7 +1049,7 @@
             });
 
             document.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('activate-btn') || e.target.classList.contains('control-match-btn')) {
+                if (e.target.classList.contains('activate-btn')) {
                     const matchId = e.target.dataset.matchId;
                     if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
                     showSpinner();
@@ -1125,7 +1059,7 @@
                         if (docSnap.exists()) {
                             const matchData = docSnap.data();
                             currentLiveMatchId = matchId;
-                            if (!matchData.isLive && !matchData.isPaused && !matchData.isSuspended) {
+                            if (!matchData.isLive) {
                                 await updateDoc(matchRef, {
                                     isLive: true,
                                     isFinished: false,
@@ -1167,7 +1101,7 @@
                          if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
                          showSpinner();
                          try {
-                            await updateMatchState(matchId, { isLive: false, isFinished: true, isPaused: false, isSuspended: false, suspensionReason: '', time: 'Finalizado' });
+                            await updateMatchState(matchId, { isLive: false, isFinished: true, isPaused: false, isSuspended: false, time: 'Finalizado' }, {description: "Partido Finalizado"}, false);
                          } catch (e) {
                              console.error("Error al finalizar partido: ", e);
                              showMessage("Error", "No se pudo finalizar el partido.");
@@ -1176,6 +1110,74 @@
                              hideModal('confirm');
                          }
                     });
+                } else if (e.target.dataset.eventType && currentLiveMatchId) {
+                    const eventType = e.target.dataset.eventType;
+                    const teamId = e.target.dataset.teamId;
+                    const eventRequiresPlayerInfo = ["gol", "tiro-libre", "penal", "cambio", "lesion", "tarjeta-amarilla", "tarjeta-roja"];
+
+                    if (eventRequiresPlayerInfo.includes(eventType)) {
+                        showModal('event-input', `${e.target.textContent}`, '');
+                        document.getElementById('event-input-ok-btn').onclick = async () => {
+                            const playerName = document.getElementById('event-player-name').value;
+                            const playerNumber = document.getElementById('event-player-number').value;
+
+                            if (!playerName) {
+                                showMessage("Error", "El nombre del jugador es requerido para este evento.");
+                                return;
+                            }
+
+                            let eventDesc = "";
+                            const matchRef = doc(db, `matches`, currentLiveMatchId);
+                            const docSnap = await getDoc(matchRef);
+                            const matchData = docSnap.data();
+
+                            const teamName = teamId === '1' ? matchData.team1.name : matchData.team2.name;
+                            
+                            switch (eventType) {
+                                case 'gol':
+                                    await updateMatchState(currentLiveMatchId, { [`score${teamId}`]: matchData[`score${teamId}`] + 1 }, {description: `¡Gol de ${playerName} (#${playerNumber || 'N/A'}) para ${teamName}!`});
+                                    break;
+                                case 'tiro-libre':
+                                    eventDesc = `Tiro libre para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                                case 'penal':
+                                    eventDesc = `Penal para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                                case 'cambio':
+                                    eventDesc = `Cambio en ${teamName}: ${playerName} (#${playerNumber || 'N/A'}) ingresa al campo.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                                case 'lesion':
+                                    eventDesc = `Lesión de ${playerName} (#${playerNumber || 'N/A'}) en ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                                case 'tarjeta-amarilla':
+                                    eventDesc = `Tarjeta Amarilla para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                                case 'tarjeta-roja':
+                                    eventDesc = `Tarjeta Roja para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                                    break;
+                            }
+
+                            hideModal('event-input');
+                        };
+                    } else {
+                        // Eventos sin info adicional
+                        let eventDesc = "";
+                        switch (eventType) {
+                            case 'travesano':
+                                eventDesc = '¡El balón pega en el travesaño!';
+                                break;
+                            case 'errado':
+                                eventDesc = '¡El jugador falla el disparo!';
+                                break;
+                        }
+                        await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
+                    }
                 }
             });
 
@@ -1184,12 +1186,8 @@
                 const matchRef = doc(db, `matches`, currentLiveMatchId);
                 const docSnap = await getDoc(matchRef);
                 const matchData = docSnap.data();
-                if (matchData.isLive) {
-                    await updateMatchState(currentLiveMatchId, {
-                        isLive: false,
-                        isPaused: true,
-                        elapsedTime: new Date().getTime() - matchData.startTime
-                    });
+                if (!matchData.isPaused) {
+                    await updateMatchState(currentLiveMatchId, {isPaused: true, isLive: false, suspensionReason: 'Descanso'});
                 }
             });
 
@@ -1198,39 +1196,24 @@
                 const matchRef = doc(db, `matches`, currentLiveMatchId);
                 const docSnap = await getDoc(matchRef);
                 const matchData = docSnap.data();
-                await updateMatchState(currentLiveMatchId, {
-                    isLive: true,
-                    isPaused: false,
-                    isSuspended: false,
-                    suspensionReason: '',
-                    startTime: new Date().getTime() - matchData.elapsedTime
-                });
+                if (matchData.isPaused || matchData.isSuspended) {
+                    const newStartTime = new Date().getTime() - matchData.elapsedTime;
+                    await updateMatchState(currentLiveMatchId, {
+                        isPaused: false,
+                        isSuspended: false,
+                        isLive: true,
+                        suspensionReason: '',
+                        startTime: newStartTime
+                    });
+                }
             });
 
             document.getElementById('suspend-match-btn').addEventListener('click', async () => {
                 if (!currentLiveMatchId || !db) return;
-                showModal('event-input', 'Suspender Partido', '');
-                document.getElementById('event-input-title').textContent = 'Motivo de Suspensión';
-                document.getElementById('event-player-name').placeholder = 'Ej: Lluvia intensa';
-                document.getElementById('event-player-number').style.display = 'none';
-                
-                document.getElementById('event-input-ok-btn').onclick = async () => {
-                    const reason = document.getElementById('event-player-name').value;
-                    if (reason) {
-                        const matchRef = doc(db, `matches`, currentLiveMatchId);
-                        const docSnap = await getDoc(matchRef);
-                        const matchData = docSnap.data();
-                        await updateMatchState(currentLiveMatchId, {
-                            isLive: false,
-                            isSuspended: true,
-                            suspensionReason: reason,
-                            elapsedTime: new Date().getTime() - matchData.startTime
-                        });
-                        hideModal('event-input');
-                    } else {
-                        showMessage("Error", "Por favor, introduce un motivo de suspensión.");
-                    }
-                };
+                const reason = prompt("Por favor, introduce el motivo de la suspensión:");
+                if (reason) {
+                    await updateMatchState(currentLiveMatchId, {isSuspended: true, isLive: false, suspensionReason: reason});
+                }
             });
 
             document.getElementById('end-match-btn').addEventListener('click', async () => {
@@ -1241,8 +1224,109 @@
                     hideModal('control');
                 });
             });
-            
-            document.getElementById('show-events-btn').addEventListener('click', async () => {
+
+            function setupMatchControl(matchId, matchData) {
+                currentLiveMatchId = matchId;
+                showModal('control', 'Control de Partido', '');
+                document.getElementById('control-team1-name').textContent = matchData.team1.name;
+                document.getElementById('control-team2-name').textContent = matchData.team2.name;
+                document.getElementById('control-team1-shield').src = matchData.team1.shield;
+                document.getElementById('control-team2-shield').src = matchData.team2.shield;
+                document.getElementById('control-team1-score').textContent = matchData.score1;
+                document.getElementById('control-team2-score').textContent = matchData.score2;
+                document.getElementById('match-stage-info').textContent = matchData.stage;
+                document.getElementById('match-leg-info').textContent = matchData.leg;
+
+                const matchRef = doc(db, `matches`, matchId);
+                onSnapshot(matchRef, (doc) => {
+                    const data = doc.data();
+                    document.getElementById('control-team1-score').textContent = data.score1;
+                    document.getElementById('control-team2-score').textContent = data.score2;
+
+                    const timerDisplay = document.getElementById('match-time-display');
+                    const infoStatus = document.getElementById('match-info-status');
+                    const suspensionInfo = document.getElementById('suspension-info');
+                    const pauseBtn = document.getElementById('pause-match-btn');
+                    const resumeBtn = document.getElementById('resume-match-btn');
+
+                    if (data.isLive) {
+                        infoStatus.style.display = 'block';
+                        suspensionInfo.style.display = 'none';
+                        pauseBtn.style.display = 'inline-block';
+                        resumeBtn.style.display = 'none';
+                        if (!matchTimerInterval) {
+                             matchStartTime = data.startTime;
+                             matchTimerInterval = setInterval(() => {
+                                const now = new Date().getTime();
+                                const elapsed = Math.floor((now - matchStartTime) / 1000) + (data.elapsedTime / 1000);
+                                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                                timerDisplay.textContent = `${minutes}:${seconds}`;
+                                updateDoc(matchRef, {time: `${minutes}:${seconds}`, elapsedTime: elapsed * 1000});
+                            }, 1000);
+                        }
+                    } else if (data.isPaused) {
+                        infoStatus.style.display = 'none';
+                        suspensionInfo.style.display = 'block';
+                        document.getElementById('suspension-reason').textContent = 'Descanso';
+                        timerDisplay.textContent = data.time;
+                        pauseBtn.style.display = 'none';
+                        resumeBtn.style.display = 'inline-block';
+                        if (matchTimerInterval) {
+                            clearInterval(matchTimerInterval);
+                            matchTimerInterval = null;
+                        }
+                    } else if (data.isSuspended) {
+                        infoStatus.style.display = 'none';
+                        suspensionInfo.style.display = 'block';
+                        document.getElementById('suspension-reason').textContent = `Suspendido: ${data.suspensionReason}`;
+                        timerDisplay.textContent = data.time;
+                        pauseBtn.style.display = 'none';
+                        resumeBtn.style.display = 'inline-block';
+                        if (matchTimerInterval) {
+                            clearInterval(matchTimerInterval);
+                            matchTimerInterval = null;
+                        }
+                    } else {
+                        infoStatus.style.display = 'block';
+                        suspensionInfo.style.display = 'none';
+                        timerDisplay.textContent = data.time;
+                        if (matchTimerInterval) {
+                            clearInterval(matchTimerInterval);
+                            matchTimerInterval = null;
+                        }
+                        hideModal('control');
+                    }
+                });
+
+                const eventsRef = query(collection(db, `matches/${matchId}/events`), orderBy("timestamp", "desc"));
+                onSnapshot(eventsRef, (eventSnapshot) => {
+                    const team1EventsContainer = document.getElementById('team1-events');
+                    const team2EventsContainer = document.getElementById('team2-events');
+                    team1EventsContainer.innerHTML = '';
+                    team2EventsContainer.innerHTML = '';
+
+                    eventSnapshot.docs.forEach(eventDoc => {
+                        const eventData = eventDoc.data();
+                        const li = document.createElement('div');
+                        li.className = 'event-log-item';
+                        li.innerHTML = `<strong>${eventData.description}</strong><span>${new Date(eventData.timestamp.toDate()).toLocaleTimeString()}</span>`;
+                        if (eventData.teamId === '1') {
+                             li.classList.add('team1');
+                             team1EventsContainer.appendChild(li);
+                        } else {
+                             li.classList.add('team2');
+                             team2EventsContainer.appendChild(li);
+                        }
+                    });
+                });
+
+                document.getElementById('control-close-btn').addEventListener('click', () => {
+                    hideModal('control');
+                });
+            }
+
+            document.getElementById('events-modal-btn').addEventListener('click', async () => {
                 if (currentLiveMatchId) {
                     const matchRef = doc(db, `matches`, currentLiveMatchId);
                     const docSnap = await getDoc(matchRef);
@@ -1257,138 +1341,17 @@
                 }
             });
 
-            function setupMatchControl(matchId, matchData) {
-                currentLiveMatchId = matchId;
-                showModal('control', 'Control de Partido', '');
-                document.getElementById('control-team1-name').textContent = matchData.team1.name;
-                document.getElementById('control-team2-name').textContent = matchData.team2.name;
-                document.getElementById('control-team1-shield').src = matchData.team1.shield;
-                document.getElementById('control-team2-shield').src = matchData.team2.shield;
-                document.getElementById('control-team1-score').textContent = matchData.score1;
-                document.getElementById('control-team2-score').textContent = matchData.score2;
-
-                const matchRef = doc(db, `matches`, matchId);
-                onSnapshot(matchRef, (doc) => {
-                    const data = doc.data();
-                    if (!data) return;
-                    
-                    document.getElementById('control-team1-score').textContent = data.score1;
-                    document.getElementById('control-team2-score').textContent = data.score2;
-
-                    const timeDisplay = document.getElementById('match-time-display');
-                    const infoDisplay = document.getElementById('match-info-display');
-                    const suspensionInfo = document.getElementById('suspension-info');
-                    const liveInfo = document.getElementById('live-status-info');
-                    const pausedInfo = document.getElementById('paused-info');
-                    const pauseBtn = document.getElementById('pause-match-btn');
-                    const resumeBtn = document.getElementById('resume-match-btn');
-
-                    infoDisplay.style.display = 'none';
-                    suspensionInfo.style.display = 'none';
-                    liveInfo.style.display = 'none';
-                    pausedInfo.style.display = 'none';
-                    pauseBtn.style.display = 'none';
-                    resumeBtn.style.display = 'none';
-
-                    if (data.isLive) {
-                        liveInfo.style.display = 'block';
-                        pauseBtn.style.display = 'inline-block';
-                        if (!matchTimerInterval) {
-                            if (!data.startTime) {
-                                updateDoc(matchRef, {startTime: new Date().getTime(), elapsedTime: 0});
-                            }
-                            matchStartTime = data.startTime;
-                            matchTimerInterval = setInterval(() => {
-                                const now = new Date().getTime();
-                                const elapsed = Math.floor((now - matchStartTime) / 1000);
-                                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                                const seconds = (elapsed % 60).toString().padStart(2, '0');
-                                timeDisplay.textContent = `${minutes}:${seconds}`;
-                                updateDoc(matchRef, {time: `${minutes}:${seconds}`});
-                            }, 1000);
-                        }
-                    } else if (data.isPaused) {
-                        pausedInfo.style.display = 'block';
-                        resumeBtn.style.display = 'inline-block';
-                        timeDisplay.textContent = data.time;
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                    } else if (data.isSuspended) {
-                        suspensionInfo.style.display = 'block';
-                        document.getElementById('suspension-reason').textContent = data.suspensionReason;
-                        resumeBtn.style.display = 'inline-block';
-                        timeDisplay.textContent = data.time;
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                    } else {
-                        infoDisplay.style.display = 'block';
-                        document.getElementById('match-stage-info').textContent = data.stage;
-                        document.getElementById('match-leg-info').textContent = data.leg;
-                        if (matchTimerInterval) {
-                            clearInterval(matchTimerInterval);
-                            matchTimerInterval = null;
-                        }
-                        hideModal('control');
-                    }
-                    
-                });
-
-                const eventsRef = query(collection(db, `matches/${matchId}/events`), orderBy("timestamp", "desc"));
-                onSnapshot(eventsRef, (eventSnapshot) => {
-                    const team1EventsContainer = document.getElementById('team1-events');
-                    const team2EventsContainer = document.getElementById('team2-events');
-                    team1EventsContainer.innerHTML = '';
-                    team2EventsContainer.innerHTML = '';
-                    
-                    eventSnapshot.docs.forEach(eventDoc => {
-                        const eventData = eventDoc.data();
-                        const li = document.createElement('div');
-                        li.className = 'event-log-item';
-                        if (eventData.teamId === '1') {
-                            li.classList.add('team1');
-                        } else if (eventData.teamId === '2') {
-                            li.classList.add('team2');
-                        }
-
-                        let eventClass = '';
-                        if (eventData.description.includes('Gol')) eventClass = 'event-gol';
-                        if (eventData.description.includes('Roja')) eventClass = 'event-roja';
-                        if (eventData.description.includes('Amarilla')) eventClass = 'event-amarilla';
-                        if (eventClass) li.classList.add(eventClass);
-
-                        li.innerHTML = `<strong>${eventData.description}</strong><span>${new Date(eventData.timestamp.toDate()).toLocaleTimeString()}</span>`;
-                        
-                        if (eventData.teamId === '1') {
-                             team1EventsContainer.appendChild(li);
-                        } else if (eventData.teamId === '2') {
-                             team2EventsContainer.appendChild(li);
-                        }
-                    });
-                });
-            }
-
-            document.querySelectorAll('.player-event-controls button, #add-goal1-btn, #add-goal2-btn').forEach(button => {
+            // Handlers para los botones de evento dentro del modal de control
+            document.querySelectorAll('.player-event-controls button').forEach(button => {
                 button.addEventListener('click', async (e) => {
                     const eventType = e.currentTarget.dataset.eventType;
                     const teamId = e.currentTarget.dataset.teamId;
-                    const requiresPlayerInfo = ["gol", "tiro-libre", "penal", "cambio", "lesion", "tarjeta-amarilla", "tarjeta-roja"];
+                    const eventRequiresPlayerInfo = ["gol", "tiro-libre", "penal", "cambio", "lesion", "tarjeta-amarilla", "tarjeta-roja"];
 
-                    if (requiresPlayerInfo.includes(eventType)) {
-                        document.getElementById('event-input-title').textContent = `Añadir ${e.currentTarget.textContent}`;
-                        document.getElementById('event-player-name').value = '';
-                        document.getElementById('event-player-number').value = '';
-                        
-                        if (eventType === 'cambio') {
-                            document.getElementById('event-player-number').style.display = 'none';
-                        } else {
-                            document.getElementById('event-player-number').style.display = 'block';
-                        }
-                        
-                        showModal('event-input');
+                    if (eventRequiresPlayerInfo.includes(eventType)) {
+                        document.getElementById('event-input-title').textContent = e.currentTarget.textContent;
+                        document.getElementById('event-player-number-group').style.display = eventType === "cambio" ? 'none' : 'block';
+                        showModal('event-input', 'Añadir Evento', '');
                         
                         document.getElementById('event-input-ok-btn').onclick = async () => {
                             const playerName = document.getElementById('event-player-name').value;
@@ -1403,58 +1366,52 @@
                             const docSnap = await getDoc(matchRef);
                             const matchData = docSnap.data();
                             const teamName = teamId === '1' ? matchData.team1.name : matchData.team2.name;
+                            const time = document.getElementById('match-time-display').textContent;
 
                             let eventDesc = "";
-                            const newUpdates = {};
-
                             switch (eventType) {
                                 case 'gol':
-                                    newUpdates[`score${teamId}`] = matchData[`score${teamId}`] + 1;
-                                    eventDesc = `⚽️ ¡Gol de ${playerName} (#${playerNumber || 'N/A'}) para ${teamName}!`;
+                                    await updateMatchState(currentLiveMatchId, { [`score${teamId}`]: matchData[`score${teamId}`] + 1 }, {description: `¡Gol de ${playerName} (#${playerNumber || 'N/A'}) para ${teamName}!`});
                                     break;
                                 case 'tiro-libre':
-                                    eventDesc = `👟 Tiro libre para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    eventDesc = `Tiro libre para ${teamName}: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                                 case 'penal':
-                                    eventDesc = `👟 Penal para ${teamName}, cobra: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    eventDesc = `Penal para ${teamName}: ${playerName} (#${playerNumber || 'N/A'})`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                                 case 'cambio':
-                                    eventDesc = `🔁 Cambio en ${teamName}: Ingresa ${playerName} (#${playerNumber || 'N/A'})`;
+                                    eventDesc = `Cambio en ${teamName}: Ingresa ${playerName} (#${playerNumber || 'N/A'})`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                                 case 'lesion':
-                                    eventDesc = `🚑 Lesión de ${playerName} (#${playerNumber || 'N/A'}) en ${teamName}.`;
+                                    eventDesc = `Lesión de ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                                 case 'tarjeta-amarilla':
-                                    eventDesc = `🟨 Tarjeta Amarilla para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    eventDesc = `Tarjeta Amarilla para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                                 case 'tarjeta-roja':
-                                    eventDesc = `🟥 Tarjeta Roja para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    eventDesc = `Tarjeta Roja para ${playerName} (#${playerNumber || 'N/A'}) de ${teamName}.`;
+                                    await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                                     break;
                             }
-
-                            await updateMatchState(currentLiveMatchId, newUpdates, {
-                                description: eventDesc,
-                                teamId: teamId
-                            });
-
                             hideModal('event-input');
                         };
                     } else {
                         // Eventos sin info adicional
                         let eventDesc = "";
-                        let teamId = null;
                         switch (eventType) {
                             case 'travesano':
-                                eventDesc = '💥 ¡El balón pega en el travesaño!';
+                                eventDesc = '¡El balón pega en el travesaño!';
                                 break;
                             case 'errado':
-                                eventDesc = '❌ ¡El jugador falla el disparo!';
+                                eventDesc = '¡El jugador falla el disparo!';
                                 break;
                         }
-                        await updateMatchState(currentLiveMatchId, {}, {
-                            description: eventDesc,
-                            teamId: teamId
-                        });
+                        await updateMatchState(currentLiveMatchId, {}, {description: eventDesc});
                     }
                 });
             });
