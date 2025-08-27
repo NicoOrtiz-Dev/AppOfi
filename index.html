@@ -573,6 +573,8 @@
             </section>
         </main>
     </div>
+
+    <!-- Modales -->
     <div id="message-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="message-modal-title"></h3>
@@ -582,6 +584,7 @@
             </div>
         </div>
     </div>
+
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="confirm-modal-title"></h3>
@@ -592,6 +595,7 @@
             </div>
         </div>
     </div>
+    
     <div id="match-control-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="control-modal-title">Control de Partido</h3>
@@ -602,9 +606,7 @@
                         <span id="control-team1-name" class="team-name">Equipo 1</span>
                     </div>
                     <div class="score-container">
-                        <span id="control-team1-score">0</span>
-                        -
-                        <span id="control-team2-score">0</span>
+                        <span id="control-team1-score">0</span> - <span id="control-team2-score">0</span>
                     </div>
                     <div class="team">
                         <img id="control-team2-shield" src="" alt="Equipo 2" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
@@ -614,7 +616,8 @@
                 <div class="match-details">
                     <div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
                     <div class="match-date">
-                        <i class="fas fa-clock"></i> <span id="control-match-date"></span>
+                        <i class="fas fa-clock"></i>
+                        <span id="control-match-date"></span>
                     </div>
                 </div>
                 <div class="admin-controls">
@@ -632,420 +635,488 @@
                         <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Messi)">
                         <button id="add-event-btn" class="btn" style="width: auto;"><i class="fas fa-plus"></i></button>
                     </div>
-                    <div class="event-log-container">
-                        <h3>Eventos del Partido</h3>
-                        <ul id="event-log" class="event-log"></ul>
-                    </div>
-                </div>
-                <div class="modal-buttons" style="justify-content: space-between;">
                     <button id="end-match-btn" class="btn red">Finalizar Partido</button>
-                    <button id="control-close-btn" class="btn">Cerrar</button>
                 </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="control-close-btn" class="btn">Cerrar</button>
             </div>
         </div>
     </div>
-    <div id="spinner" class="spinner"></div>
+    
+    <div class="spinner" id="spinner"></div>
+
     <script type="module">
-        // Importa las funciones y variables desde el archivo de configuración de Firebase
-        import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc } from "./firebase-config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, where, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Variables de estado
-        let currentLiveMatchId = null;
-        let matchTimerInterval = null;
+        let app, auth, db, userId, currentLiveMatchId = null, unsubscribeMatch;
 
-        // Se ejecuta solo cuando el DOM (la estructura HTML) ha sido completamente cargado.
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM Cargado. Esperando autenticación de Firebase.");
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const liveMatchesContainer = document.getElementById('live-matches-container');
+        const upcomingMatchesContainer = document.getElementById('upcoming-matches-container');
+        const finishedMatchesContainer = document.getElementById('finished-matches-container');
+        const loginPanel = document.getElementById('admin-login');
+        const adminPanel = document.getElementById('admin-panel');
+        const spinner = document.getElementById('spinner');
 
-            // Selectores de elementos
-            const sections = document.querySelectorAll('section');
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const liveMatchesContainer = document.getElementById('live-matches-container');
-            const upcomingMatchesContainer = document.getElementById('upcoming-matches-container');
-            const finishedMatchesContainer = document.getElementById('finished-matches-container');
-            const adminLogin = document.getElementById('admin-login');
-            const adminPanel = document.getElementById('admin-panel');
-            const adminPasswordInput = document.getElementById('admin-password');
-            const loginBtn = document.getElementById('login-btn');
-            const addMatchBtn = document.getElementById('add-match-btn');
-            const spinner = document.getElementById('spinner');
+        // Referencias a los modales y sus elementos
+        const messageModal = document.getElementById('message-modal');
+        const messageModalTitle = document.getElementById('message-modal-title');
+        const messageModalMessage = document.getElementById('message-modal-message');
+        const messageModalCloseBtn = document.getElementById('modal-close-btn');
 
-            // Funciones de utilidad para la UI
-            function showSection(sectionId) {
-                sections.forEach(section => {
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmModalTitle = document.getElementById('confirm-modal-title');
+        const confirmModalMessage = document.getElementById('confirm-modal-message');
+        const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+        const confirmOkBtn = document.getElementById('confirm-ok-btn');
+        let confirmAction = null;
+
+        const matchControlModal = document.getElementById('match-control-modal');
+        const controlCloseBtn = document.getElementById('control-close-btn');
+        const controlTeam1Name = document.getElementById('control-team1-name');
+        const controlTeam2Name = document.getElementById('control-team2-name');
+        const controlTeam1Score = document.getElementById('control-team1-score');
+        const controlTeam2Score = document.getElementById('control-team2-score');
+
+        const team1NameInput = document.getElementById('team1-name');
+        const team1ShieldInput = document.getElementById('team1-shield');
+        const team2NameInput = document.getElementById('team2-name');
+        const team2ShieldInput = document.getElementById('team2-shield');
+        const matchDateInput = document.getElementById('match-date');
+        const matchTimeInput = document.getElementById('match-time');
+        const matchTypeSelect = document.getElementById('match-type');
+        const addMatchBtn = document.getElementById('add-match-btn');
+
+        const playerEventInput = document.getElementById('player-event-input');
+        const addEventBtn = document.getElementById('add-event-btn');
+        const endMatchBtn = document.getElementById('end-match-btn');
+        const controlAddGoal1Btn = document.getElementById('control-add-goal1');
+        const controlAddGoal2Btn = document.getElementById('control-add-goal2');
+        const controlAddYellow1Btn = document.getElementById('control-add-yellow1');
+        const controlAddRed1Btn = document.getElementById('control-add-red1');
+        const controlAddYellow2Btn = document.getElementById('control-add-yellow2');
+        const controlAddRed2Btn = document.getElementById('control-add-red2');
+
+        const showSpinner = () => { spinner.style.display = 'block'; };
+        const hideSpinner = () => { spinner.style.display = 'none'; };
+
+        function showMessage(title, message) {
+            messageModalTitle.textContent = title;
+            messageModalMessage.textContent = message;
+            messageModal.style.display = 'flex';
+        }
+
+        function hideMessage() {
+            messageModal.style.display = 'none';
+        }
+        
+        function showConfirm(title, message, callback) {
+            confirmModalTitle.textContent = title;
+            confirmModalMessage.textContent = message;
+            confirmAction = callback;
+            confirmModal.style.display = 'flex';
+        }
+
+        function hideConfirm() {
+            confirmModal.style.display = 'none';
+        }
+
+        function hideMatchControlModal() {
+            if (unsubscribeMatch) {
+                unsubscribeMatch();
+                unsubscribeMatch = null;
+            }
+            matchControlModal.style.display = 'none';
+        }
+
+        messageModalCloseBtn.addEventListener('click', hideMessage);
+        confirmCancelBtn.addEventListener('click', hideConfirm);
+        confirmOkBtn.addEventListener('click', () => {
+            if (confirmAction) {
+                confirmAction();
+            }
+            hideConfirm();
+        });
+        controlCloseBtn.addEventListener('click', hideMatchControlModal);
+        
+        // ====================================================================
+        // Inicio de la inyección de las nuevas funciones de administración
+        // ====================================================================
+
+        async function addNewMatch() {
+            if (!db || !userId) {
+                showMessage("Error", "La base de datos no está disponible.");
+                return;
+            }
+            const team1Name = team1NameInput.value.trim();
+            const team1Shield = team1ShieldInput.value.trim();
+            const team2Name = team2NameInput.value.trim();
+            const team2Shield = team2ShieldInput.value.trim();
+            const matchDate = matchDateInput.value;
+            const matchTime = matchTimeInput.value;
+            const matchType = matchTypeSelect.value;
+            
+            if (!team1Name || !team2Name || !matchDate || !matchTime) {
+                showMessage("Error", "Por favor, completa todos los campos.");
+                return;
+            }
+
+            showSpinner();
+            try {
+                const newMatchData = {
+                    team1Name,
+                    team1Shield: team1Shield || `https://placehold.co/60x60/8B8B8B/FFFFFF?text=${team1Name.substring(0, 3)}`,
+                    team2Name,
+                    team2Shield: team2Shield || `https://placehold.co/60x60/8B8B8B/FFFFFF?text=${team2Name.substring(0, 3)}`,
+                    date: matchDate,
+                    time: matchTime,
+                    matchType,
+                    isLive: false,
+                    isFinished: false,
+                    team1Score: 0,
+                    team2Score: 0,
+                    events: []
+                };
+
+                const docRef = await addDoc(collection(db, `artifacts/${window.__app_id}/users/${userId}/matches`), newMatchData);
+                hideSpinner();
+                showMessage("Éxito", "Partido añadido correctamente.");
+                
+                team1NameInput.value = '';
+                team1ShieldInput.value = '';
+                team2NameInput.value = '';
+                team2ShieldInput.value = '';
+                matchDateInput.value = '';
+                matchTimeInput.value = '';
+            } catch (error) {
+                hideSpinner();
+                console.error("Error al añadir el partido:", error);
+                showMessage("Error", "No se pudo añadir el partido. Inténtalo de nuevo.");
+            }
+        }
+        
+        async function updateMatchState(matchId, updates, eventDescription = null) {
+            if (!db || !userId) {
+                showMessage("Error", "La base de datos no está disponible.");
+                return;
+            }
+
+            showSpinner();
+            try {
+                const matchRef = doc(db, `artifacts/${window.__app_id}/users/${userId}/matches`, matchId);
+                const docSnap = await getDoc(matchRef);
+                
+                if (!docSnap.exists()) {
+                    showMessage("Error", "El partido no existe.");
+                    hideSpinner();
+                    return;
+                }
+                
+                const currentData = docSnap.data();
+                const updatedEvents = [...(currentData.events || [])];
+
+                if (eventDescription) {
+                    updatedEvents.push({
+                        description: eventDescription,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                const newUpdates = {
+                    ...updates,
+                    events: updatedEvents
+                };
+
+                await updateDoc(matchRef, newUpdates);
+                hideSpinner();
+            } catch (error) {
+                hideSpinner();
+                console.error("Error al actualizar el partido:", error);
+                showMessage("Error", "No se pudo actualizar el partido.");
+            }
+        }
+
+        async function endMatch() {
+            if (!currentLiveMatchId || !db || !userId) {
+                showMessage("Error", "La base de datos no está disponible.");
+                return;
+            }
+            showConfirm(
+                "Finalizar Partido",
+                "¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.",
+                async () => {
+                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, "Partido Finalizado");
+                    hideMatchControlModal();
+                    fetchAndRenderMatches('live');
+                }
+            );
+        }
+
+        async function openMatchControlModal(matchId) {
+            if (!db || !userId) {
+                showMessage("Error", "La base de datos no está disponible.");
+                return;
+            }
+            currentLiveMatchId = matchId;
+            showSpinner();
+
+            if (unsubscribeMatch) {
+                unsubscribeMatch();
+            }
+            
+            const matchRef = doc(db, `artifacts/${window.__app_id}/users/${userId}/matches`, matchId);
+            unsubscribeMatch = onSnapshot(matchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const match = docSnap.data();
+                    document.getElementById('control-modal-title').textContent = `${match.team1Name} vs ${match.team2Name}`;
+                    document.getElementById('control-team1-name').textContent = match.team1Name;
+                    document.getElementById('control-team2-name').textContent = match.team2Name;
+                    document.getElementById('control-team1-shield').src = match.team1Shield;
+                    document.getElementById('control-team2-shield').src = match.team2Shield;
+                    controlTeam1Score.textContent = match.team1Score;
+                    controlTeam2Score.textContent = match.team2Score;
+                    document.getElementById('control-match-date').textContent = match.date;
+
+                    const eventLogElement = document.getElementById('event-log-container');
+                    if (eventLogElement) {
+                         eventLogElement.innerHTML = '';
+                         (match.events || []).forEach(event => {
+                             const p = document.createElement('p');
+                             p.textContent = event.description;
+                             eventLogElement.appendChild(p);
+                         });
+                    }
+
+                    hideSpinner();
+                    matchControlModal.style.display = 'flex';
+                } else {
+                    hideMatchControlModal();
+                    fetchAndRenderMatches('live');
+                }
+            }, (error) => {
+                console.error("Error en onSnapshot:", error);
+                hideMatchControlModal();
+                showMessage("Error", "No se pudo cargar el control del partido. Por favor, recarga la página.");
+            });
+        }
+        
+        addMatchBtn.addEventListener('click', addNewMatch);
+        endMatchBtn.addEventListener('click', endMatch);
+
+        controlAddGoal1Btn.addEventListener('click', () => {
+            const currentScore = parseInt(controlTeam1Score.textContent, 10);
+            updateMatchState(currentLiveMatchId, { team1Score: currentScore + 1 }, `¡Gol de ${controlTeam1Name.textContent}!`);
+        });
+
+        controlAddGoal2Btn.addEventListener('click', () => {
+            const currentScore = parseInt(controlTeam2Score.textContent, 10);
+            updateMatchState(currentLiveMatchId, { team2Score: currentScore + 1 }, `¡Gol de ${controlTeam2Name.textContent}!`);
+        });
+
+        controlAddYellow1Btn.addEventListener('click', () => {
+            updateMatchState(currentLiveMatchId, {}, `Tarjeta amarilla para ${controlTeam1Name.textContent}`);
+        });
+
+        controlAddRed1Btn.addEventListener('click', () => {
+            updateMatchState(currentLiveMatchId, {}, `Tarjeta roja para ${controlTeam1Name.textContent}`);
+        });
+
+        controlAddYellow2Btn.addEventListener('click', () => {
+            updateMatchState(currentLiveMatchId, {}, `Tarjeta amarilla para ${controlTeam2Name.textContent}`);
+        });
+        
+        controlAddRed2Btn.addEventListener('click', () => {
+            updateMatchState(currentLiveMatchId, {}, `Tarjeta roja para ${controlTeam2Name.textContent}`);
+        });
+        
+        addEventBtn.addEventListener('click', async () => {
+            if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+            const eventDesc = playerEventInput.value;
+            if (eventDesc) {
+                await updateMatchState(currentLiveMatchId, {}, eventDesc);
+                playerEventInput.value = '';
+            } else {
+                showMessage("Error", "Por favor, ingresa una descripción para el evento.");
+            }
+        });
+        
+        // ====================================================================
+        // Fin de la inyección de las nuevas funciones de administración
+        // ====================================================================
+
+
+        // El siguiente código es del original que me enviaste
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const password = document.getElementById('admin-password').value;
+            if (password === '123') { // Contraseña de prueba
+                loginPanel.style.display = 'none';
+                adminPanel.style.display = 'block';
+            } else {
+                showMessage('Error', 'Contraseña incorrecta.');
+            }
+        });
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const sectionId = button.dataset.section;
+                document.querySelectorAll('.section').forEach(section => {
                     section.style.display = 'none';
                 });
                 document.getElementById(sectionId).style.display = 'block';
-            }
-
-            function showModal(type, title, message, onConfirm = null) {
-                const modal = document.getElementById(`${type}-modal`);
-                if (!modal) return;
-                const titleElement = modal.querySelector('h3');
-                const messageElement = modal.querySelector('p');
-                if (titleElement) titleElement.textContent = title;
-                if (messageElement) messageElement.textContent = message;
-                modal.style.display = 'flex';
-                const confirmBtn = document.getElementById('confirm-ok-btn');
-                if (type === 'confirm' && onConfirm) {
-                    confirmBtn.onclick = onConfirm;
-                }
-            }
-
-            function hideModal(type) {
-                const modal = document.getElementById(`${type}-modal`);
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-                if (type === 'control' && matchTimerInterval) {
-                    clearInterval(matchTimerInterval);
-                    matchTimerInterval = null;
-                }
-                currentLiveMatchId = null;
-            }
-
-            function showSpinner() { spinner.style.display = 'flex'; }
-            function hideSpinner() { spinner.style.display = 'none'; }
-            function showMessage(title, message) { showModal('message', title, message); }
-            
-            // Función para actualizar el estado del partido en Firestore
-            async function updateMatchState(matchId, updates, eventDesc = "", isLive = true) {
-                if (!db) { showMessage("Error", "La base de datos no está disponible. Intenta refrescar la página."); return; }
-                showSpinner();
-                try {
-                    const matchRef = doc(collection(db, `matches`), matchId);
-                    await updateDoc(matchRef, { ...updates, isLive: isLive });
-                    if (eventDesc) {
-                        const eventRef = collection(db, `matches/${matchId}/events`);
-                        await addDoc(eventRef, {
-                            description: eventDesc,
-                            timestamp: new Date()
-                        });
+                if (sectionId === 'inicio') {
+                    fetchAndRenderMatches('live');
+                } else if (sectionId === 'fechas') {
+                    fetchAndRenderMatches('upcoming');
+                } else if (sectionId === 'partidos') {
+                    fetchAndRenderMatches('finished');
+                } else if (sectionId === 'admin') {
+                    if (document.getElementById('admin-password').value === '123') {
+                        loginPanel.style.display = 'none';
+                        adminPanel.style.display = 'block';
+                    } else {
+                        loginPanel.style.display = 'block';
+                        adminPanel.style.display = 'none';
                     }
-                } catch (e) {
-                    console.error("Error al actualizar el estado del partido: ", e);
-                    showMessage("Error", "No se pudo actualizar el partido.");
-                } finally {
-                    hideSpinner();
                 }
+            });
+        });
+
+        async function fetchAndRenderMatches(type) {
+            if (!db || !userId) {
+                showMessage("Error", "La base de datos no está disponible. Por favor, recarga la página.");
+                return;
             }
-
-            // Función para renderizar los partidos
-            function renderMatches(container, matches) {
-                container.innerHTML = '';
-                if (matches.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos para mostrar.</p>';
-                    return;
-                }
-                matches.forEach(match => {
-                    const matchElement = document.createElement('div');
-                    matchElement.className = 'live-match-card';
-                    matchElement.innerHTML = `
-                        <div class="match-header">
-                            <div class="team">
-                                <img src="${match.team1.shield}" alt="${match.team1.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
-                                <span class="team-name">${match.team1.name}</span>
-                            </div>
-                            <div class="score-container">
-                                <span>${match.score1}</span>
-                                -
-                                <span>${match.score2}</span>
-                            </div>
-                            <div class="team">
-                                <img src="${match.team2.shield}" alt="${match.team2.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
-                                <span class="team-name">${match.team2.name}</span>
-                            </div>
-                        </div>
-                        <div class="match-details">
-                            <div class="match-time">Tiempo: <span>${match.time}</span></div>
-                            <div class="match-date">
-                                <i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleDateString()}</span>
-                            </div>
-                        </div>
-                        <div class="admin-actions" style="display:none;">
-                            <button class="btn control-btn" data-match-id="${match.id}">Controlar</button>
-                            <button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>
-                        </div>
-                    `;
-                    container.appendChild(matchElement);
-                });
-                updateAdminView();
-            }
-
-            // Manejo de eventos de la UI
-            navButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const sectionId = e.currentTarget.dataset.section;
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    showSection(sectionId);
-                });
-            });
-
-            // Lógica de administrador
-            let isAdmin = false;
-            const ADMIN_PASSWORD = "adminpass"; // Contraseña de admin estática
-
-            loginBtn.addEventListener('click', () => {
-                if (adminPasswordInput.value === ADMIN_PASSWORD) {
-                    isAdmin = true;
-                    adminLogin.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                    updateAdminView();
-                } else {
-                    showMessage("Error de Autenticación", "Contraseña incorrecta.");
-                    adminPasswordInput.value = '';
-                }
-            });
-
-            function updateAdminView() {
-                const adminActionButtons = document.querySelectorAll('.admin-actions');
-                adminActionButtons.forEach(btn => {
-                    btn.style.display = isAdmin ? 'flex' : 'none';
-                });
-            }
-
-            // Lógica de Firebase
-            // Se usa onAuthStateChanged para asegurarse de que Firebase está listo y autenticado
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    console.log("Autenticación de Firebase lista. Conectando a la base de datos.");
-                    const matchesRef = collection(db, `matches`);
-                    
-                    // Listener para todos los partidos (en vivo, próximos, finalizados)
-                    onSnapshot(matchesRef, (snapshot) => {
-                        const liveMatches = [];
-                        const upcomingMatches = [];
-                        const finishedMatches = [];
-
-                        snapshot.docs.forEach(doc => {
-                            const matchData = { id: doc.id, ...doc.data() };
-                            if (matchData.isLive) {
-                                liveMatches.push(matchData);
-                            } else if (matchData.isFinished) {
-                                finishedMatches.push(matchData);
-                            } else {
-                                upcomingMatches.push(matchData);
-                            }
-                        });
-
-                        renderMatches(liveMatchesContainer, liveMatches);
-                        renderMatches(upcomingMatchesContainer, upcomingMatches);
-                        renderMatches(finishedMatchesContainer, finishedMatches);
-                        updateAdminView();
-                    });
-                } else {
-                    console.log("Usuario no autenticado. La aplicación se ejecutará en modo solo lectura.");
-                }
-            });
-
-            // Añadir nuevo partido
-            addMatchBtn.addEventListener('click', async () => {
-                if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                showSpinner();
-                const team1Name = document.getElementById('team1-name').value;
-                const team1Shield = document.getElementById('team1-shield').value;
-                const team2Name = document.getElementById('team2-name').value;
-                const team2Shield = document.getElementById('team2-shield').value;
-                const matchDate = document.getElementById('match-date').value;
-                const matchTime = document.getElementById('match-time').value;
-                const matchType = document.getElementById('match-type').value;
-
-                if (!team1Name || !team2Name || !matchDate || !matchTime) {
-                    showMessage("Error", "Por favor, completa todos los campos del formulario.");
-                    hideSpinner();
-                    return;
-                }
-
-                try {
-                    await addDoc(collection(db, `matches`), {
-                        team1: { name: team1Name, shield: team1Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
-                        team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
-                        date: new Date(`${matchDate}T${matchTime}`).toISOString(),
-                        type: matchType,
-                        score1: 0,
-                        score2: 0,
-                        isLive: false,
-                        isFinished: false,
-                        time: '00:00',
-                        events: []
-                    });
-                    showMessage("Éxito", "Partido añadido correctamente.");
-                } catch (e) {
-                    console.error("Error al añadir partido: ", e);
-                    showMessage("Error", "No se pudo añadir el partido.");
-                } finally {
-                    hideSpinner();
-                }
-            });
-
-            // Control de partido (modal)
-            let matchTimerStart = null;
+            showSpinner();
+            let matchesRef = collection(db, `artifacts/${window.__app_id}/users/${userId}/matches`);
+            let q;
+            let container;
             
-            document.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('control-btn')) {
-                    const matchId = e.target.dataset.matchId;
-                    if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                    showSpinner();
-                    try {
-                        const matchRef = doc(collection(db, `matches`), matchId);
-                        const docSnap = await getDoc(matchRef);
-                        if (docSnap.exists()) {
-                            const matchData = docSnap.data();
-                            currentLiveMatchId = matchId;
-                            // Actualizar el estado a 'en vivo' si no lo está
-                            if (!matchData.isLive) {
-                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00' });
-                                // Establecer la hora de inicio en Firestore si es la primera vez que se controla
-                                await updateDoc(matchRef, { startTime: new Date().getTime() });
-                            }
-                            // Iniciar el modal y el timer
-                            showModal('control', 'Control de Partido', '');
-                            document.getElementById('control-team1-name').textContent = matchData.team1.name;
-                            document.getElementById('control-team2-name').textContent = matchData.team2.name;
-                            document.getElementById('control-team1-shield').src = matchData.team1.shield;
-                            document.getElementById('control-team2-shield').src = matchData.team2.shield;
-                            document.getElementById('control-team1-score').textContent = matchData.score1;
-                            document.getElementById('control-team2-score').textContent = matchData.score2;
-                            document.getElementById('control-match-date').textContent = new Date(matchData.date).toLocaleDateString();
+            if (type === 'live') {
+                q = query(matchesRef, where('isLive', '==', true));
+                container = liveMatchesContainer;
+            } else if (type === 'upcoming') {
+                q = query(matchesRef, where('isLive', '==', false), where('isFinished', '==', false));
+                container = upcomingMatchesContainer;
+            } else { // 'finished'
+                q = query(matchesRef, where('isFinished', '==', true));
+                container = finishedMatchesContainer;
+            }
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = '';
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos en esta categoría.</p>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const match = doc.data();
+                        const card = document.createElement('div');
+                        card.className = (type === 'live') ? 'live-match-card' : 'upcoming-match-card';
+                        
+                        card.innerHTML = `
+                            <div class="match-header">
+                                <div class="team">
+                                    <img src="${match.team1Shield}" alt="${match.team1Name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                    <span class="team-name">${match.team1Name}</span>
+                                </div>
+                                <div class="score-container">
+                                    <span id="score1-${doc.id}">${match.team1Score}</span> - <span id="score2-${doc.id}">${match.team2Score}</span>
+                                </div>
+                                <div class="team">
+                                    <img src="${match.team2Shield}" alt="${match.team2Name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                    <span class="team-name">${match.team2Name}</span>
+                                </div>
+                            </div>
+                            <div class="match-details">
+                                <div class="date"><i class="fas fa-calendar-alt"></i> ${match.date}</div>
+                                <div class="time"><i class="fas fa-clock"></i> ${match.time}</div>
+                            </div>
+                            ${type === 'live' ? `<div class="event-log" id="event-log-${doc.id}"></div>` : ''}
+                            ${type === 'live' || type === 'upcoming' ? `<button class="admin-only-btn" data-id="${doc.id}">Controlar</button>` : ''}
+                        `;
+                        container.appendChild(card);
 
-                            // Iniciar el listener del timer para actualizar el tiempo en tiempo real
-                            onSnapshot(matchRef, (doc) => {
-                                const data = doc.data();
-                                document.getElementById('control-team1-score').textContent = data.score1;
-                                document.getElementById('control-team2-score').textContent = data.score2;
-                                if (data.startTime) {
-                                    matchTimerStart = data.startTime;
-                                    if (matchTimerInterval) clearInterval(matchTimerInterval);
-                                    matchTimerInterval = setInterval(() => {
-                                        const now = new Date().getTime();
-                                        const elapsed = Math.floor((now - matchTimerStart) / 1000);
-                                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                                        const seconds = (elapsed % 60).toString().padStart(2, '0');
-                                        document.getElementById('control-match-time').textContent = `${minutes}:${seconds}`;
-                                    }, 1000);
+                        if (type === 'live') {
+                            const eventLog = document.getElementById(`event-log-${doc.id}`);
+                            if (match.events) {
+                                (match.events || []).forEach(event => {
+                                    const p = document.createElement('p');
+                                    p.textContent = event.description;
+                                    eventLog.appendChild(p);
+                                });
+                                eventLog.scrollTop = eventLog.scrollHeight;
+                            }
+                            onSnapshot(doc.ref, (liveDoc) => {
+                                if (liveDoc.exists()) {
+                                    const liveData = liveDoc.data();
+                                    document.getElementById(`score1-${liveDoc.id}`).textContent = liveData.team1Score;
+                                    document.getElementById(`score2-${liveDoc.id}`).textContent = liveData.team2Score;
+                                    const updatedEventLog = document.getElementById(`event-log-${liveDoc.id}`);
+                                    if (updatedEventLog) {
+                                        updatedEventLog.innerHTML = '';
+                                        (liveData.events || []).forEach(event => {
+                                            const p = document.createElement('p');
+                                            p.textContent = event.description;
+                                            updatedEventLog.appendChild(p);
+                                        });
+                                        updatedEventLog.scrollTop = updatedEventLog.scrollHeight;
+                                    }
                                 }
                             });
-                            // Iniciar el listener para el log de eventos
-                            const eventsRef = collection(db, `matches/${matchId}/events`);
-                            onSnapshot(eventsRef, (eventSnapshot) => {
-                                const eventLogList = document.getElementById('event-log');
-                                eventLogList.innerHTML = '';
-                                eventSnapshot.docs.forEach(eventDoc => {
-                                    const eventData = eventDoc.data();
-                                    const li = document.createElement('li');
-                                    li.textContent = eventData.description;
-                                    eventLogList.appendChild(li);
-                                });
-                                // Scroll al final
-                                eventLogList.scrollTop = eventLogList.scrollHeight;
-                            });
                         }
-                    } catch (e) {
-                        console.error("Error al obtener datos del partido: ", e);
-                        showMessage("Error", "No se pudo cargar el control del partido.");
-                    } finally {
-                        hideSpinner();
-                    }
-                } else if (e.target.classList.contains('delete-btn')) {
-                    const matchId = e.target.dataset.matchId;
-                    showModal('confirm', 'Confirmar Eliminación', '¿Estás seguro de que deseas eliminar este partido?', async () => {
-                        if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                        showSpinner();
-                        try {
-                            const matchRef = doc(collection(db, `matches`), matchId);
-                            await deleteDoc(matchRef);
-                            showMessage("Éxito", "Partido eliminado correctamente.");
-                        } catch (e) {
-                            console.error("Error al eliminar partido: ", e);
-                            showMessage("Error", "No se pudo eliminar el partido.");
-                        } finally {
-                            hideSpinner();
-                            hideModal('confirm');
+                        
+                        if (type === 'live' || type === 'upcoming') {
+                            card.querySelector('.admin-only-btn').addEventListener('click', (e) => {
+                                const matchId = e.target.getAttribute('data-id');
+                                openMatchControlModal(matchId);
+                            });
                         }
                     });
                 }
-            });
+                hideSpinner();
+            } catch (error) {
+                hideSpinner();
+                console.error("Error al obtener los partidos:", error);
+                showMessage("Error", "No se pudo cargar los partidos. Inténtalo de nuevo.");
+            }
+        }
 
-            // Controladores de los botones del modal de control
-            document.getElementById('control-add-goal1').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const currentScore = docSnap.data().score1;
-                    await updateMatchState(currentLiveMatchId, { score1: currentScore + 1 }, "¡Gol del Equipo 1!");
-                }
-            });
-            document.getElementById('control-add-goal2').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const currentScore = docSnap.data().score2;
-                    await updateMatchState(currentLiveMatchId, { score2: currentScore + 1 }, "¡Gol del Equipo 2!");
-                }
-            });
-            document.getElementById('control-add-yellow1').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
-                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team1.name}.`);
-                }
-            });
-            document.getElementById('control-add-red1').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
-                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team1.name}.`);
-                }
-            });
-            document.getElementById('control-add-yellow2').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
-                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team2.name}.`);
-                }
-            });
-            document.getElementById('control-add-red2').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) return;
-                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
-                const docSnap = await getDoc(matchRef);
-                if (docSnap.exists()) {
-                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
-                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team2.name}.`);
-                }
-            });
-            document.getElementById('add-event-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                const eventDesc = document.getElementById('player-event-input').value;
-                if (eventDesc) {
-                    await updateMatchState(currentLiveMatchId, {}, eventDesc);
-                    document.getElementById('player-event-input').value = '';
+        window.onload = async function() {
+            // Se añaden las variables de entorno de forma segura, como debe ser.
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            window.__app_id = appId;
+
+            if (!firebaseConfig) {
+                showMessage("Error de Configuración", "La configuración de Firebase no está disponible.");
+                hideSpinner();
+                return;
+            }
+
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
                 } else {
-                    showMessage("Error", "Por favor, ingresa una descripción para el evento.");
+                    await signInAnonymously(auth);
                 }
-            });
-            document.getElementById('end-match-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
-                showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
-                    await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, 'Partido Finalizado');
-                    hideModal('confirm');
-                    hideModal('control');
-                });
-            });
 
-            // Controladores para los modales
-            document.getElementById('modal-close-btn').addEventListener('click', () => hideModal('message'));
-            document.getElementById('confirm-cancel-btn').addEventListener('click', () => hideModal('confirm'));
-            document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
-        });
+                userId = auth.currentUser.uid;
+                fetchAndRenderMatches('live');
+            } catch (error) {
+                console.error("Error de autenticación o base de datos:", error);
+                showMessage("Error de Conexión", "No se pudo conectar a Firebase. Por favor, recarga la página.");
+            }
+        };
     </script>
 </body>
 </html>
