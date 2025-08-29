@@ -1013,7 +1013,19 @@
                             <div class="match-time">Tiempo: <span class="live-time">${match.time || '00:00'}</span></div>
                             <div class="match-date"><i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleString()}</span></div>
                         </div>
-                        <div class="admin-actions" style="display:${isAdmin ? 'flex' : 'none'}; justify-content:center; gap:10px;">
+                        <div class="admin-actions
+                        <div class="events-live-container" id="live-events-\${match.id}">
+                            <div class="teams-grid">
+                                <div>
+                                    <h4>\${match.team1.name}</h4>
+                                    <div id="live-events-team1-\${match.id}" class="team-events"></div>
+                                </div>
+                                <div>
+                                    <h4>\${match.team2.name}</h4>
+                                    <div id="live-events-team2-\${match.id}" class="team-events"></div>
+                                </div>
+                            </div>
+                        </div>" style="display:${isAdmin ? 'flex' : 'none'}; justify-content:center; gap:10px;">
                             <button class="btn activate-btn" data-match-id="${match.id}">Activar</button>
                             <button class="btn red finalize-btn" data-match-id="${match.id}">Finalizar</button>
                             <button class="btn" data-match-id="${match.id}" style="display:none;">Control</button>
@@ -1025,6 +1037,7 @@
                         if (isAdmin) openControlModal(match.id);
                     });
                     liveMatchesContainer.appendChild(el);
+                    attachLiveEventsListener(match.id, match.team1.name, match.team2.name);
                 });
                 // Actualiza tiempos en lista (si algún partido tiene startTime)
                 LIVE_MATCHES.forEach(m => {
@@ -1113,6 +1126,37 @@
                         </div>
                     `;
                     finishedMatchesContainer.appendChild(el);
+                });
+            }
+
+            
+            // Eventos en vivo debajo de cada partido en la sección Inicio
+            function attachLiveEventsListener(matchId, team1Name, team2Name) {
+                const eventsRef = collection(db, `matches/${matchId}/events`);
+                onSnapshot(eventsRef, (eventsSnap) => {
+                    const docs = eventsSnap.docs.slice().sort((a,b) => {
+                        const at = a.data().timestamp ? a.data().timestamp.toMillis ? a.data().timestamp.toMillis() : (new Date(a.data().timestamp)).getTime() : 0;
+                        const bt = b.data().timestamp ? b.data().timestamp.toMillis ? b.data().timestamp.toMillis() : (new Date(b.data().timestamp)).getTime() : 0;
+                        return bt - at;
+                    });
+                    const team1Div = document.getElementById(`live-events-team1-${matchId}`);
+                    const team2Div = document.getElementById(`live-events-team2-${matchId}`);
+                    if (!team1Div || !team2Div) return;
+                    team1Div.innerHTML = '';
+                    team2Div.innerHTML = '';
+                    docs.forEach(d => {
+                        const ev = d.data();
+                        const div = document.createElement('div');
+                        div.className = 'event-item';
+                        const ts = ev.timestamp ? (ev.timestamp.toDate ? ev.timestamp.toDate().toLocaleTimeString() : new Date(ev.timestamp).toLocaleTimeString()) : '';
+                        div.textContent = `${ts} - ${ev.description}`;
+                        // lógica: si el evento contiene el nombre de team2 o "equipo 2" => a la derecha, sino a la izquierda
+                        if (ev.description && (ev.description.toLowerCase().includes(team2Name.toLowerCase()) || ev.description.toLowerCase().includes("equipo 2"))) {
+                            team2Div.appendChild(div);
+                        } else {
+                            team1Div.appendChild(div);
+                        }
+                    });
                 });
             }
 
