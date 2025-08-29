@@ -223,10 +223,6 @@
             color: var(--text-color);
             font-weight: 400;
         }
-        /* Eliminamos el guion extra en el marcador del partido */
-        .score-container.global-score::before {
-            content: '';
-        }
 
         .match-details {
             display: flex;
@@ -415,11 +411,6 @@
             animation: modalFadeIn 0.3s ease-out;
         }
 
-        .event-modal-content {
-            max-width: 600px;
-            width: 90%;
-        }
-
         @keyframes modalFadeIn {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
@@ -476,147 +467,11 @@
             transform: translate(-50%, -50%);
             z-index: 1001;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .match-timer {
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .match-status-info {
-            font-size: 0.9em;
-            text-align: center;
-            margin-top: 5px;
-            color: var(--accent-color);
-            font-weight: 600;
-        }
-
-        .event-log-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .event-log-team {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .event-log-team::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .event-log-team::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-        }
-        
-        .event-log-team::-webkit-scrollbar-track {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .event-item {
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #F8F9FA;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .event-item.team1-event {
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .event-item.team2-event {
-            border-right: 4px solid var(--secondary-color);
-        }
-        
-        .event-icon {
-            font-size: 1.2em;
-            color: var(--primary-color);
-        }
-        
-        .event-item-text {
-            flex-grow: 1;
-        }
-        
-        .event-timestamp {
-            font-size: 0.8em;
-            color: #6c757d;
-        }
-        
-        .event-form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .event-form-group label {
-            font-weight: 600;
-        }
-        
-        .event-form-group input, .event-form-group select {
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #D1D9E6;
-        }
-
-        .admin-match-controls {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .admin-match-controls .btn {
-            flex: 1;
-            padding: 10px;
-            font-size: 1em;
-        }
-        
-        .global-score-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
-        .global-score-box {
-            background-color: var(--card-bg);
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
-        
-        /* Ocultar el guion del marcador cuando hay una etapa y un tipo de partido */
-        .match-details.with-info .score-container::before {
-            content: '';
-        }
-        
-        /* Estilos para el texto de suspensión */
-        .suspension-text {
-            color: #dc3545;
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: center;
-        }
-
 
         @media (max-width: 600px) {
             .nav-btn span {
@@ -671,952 +526,525 @@
             </section>
             <!-- Sección de Admin -->
             <section id="admin" class="section" style="display:none;">
-                <div class="section-header">
-                    <h2>Panel de Administración</h2>
-                    <i class="fas fa-user-shield" style="font-size: 2em; color: var(--accent-color);"></i>
+                <div id="admin-login" class="login-form">
+                    <h2>Acceso de Administrador</h2>
+                    <input type="password" id="admin-password" placeholder="Contraseña de Admin">
+                    <button id="login-btn" class="btn">Acceder</button>
                 </div>
-                <div class="form-container">
-                    <h3>Crear Nuevo Partido</h3>
-                    <div class="form-group">
-                        <label for="team1-name">Nombre Equipo 1:</label>
-                        <input type="text" id="team1-name" placeholder="Ej: Real Madrid">
-                    </div>
-                    <div class="form-group">
-                        <label for="team1-shield">Escudo Equipo 1 (URL):</label>
-                        <input type="text" id="team1-shield" placeholder="URL del escudo">
-                    </div>
-                    <div class="form-group">
-                        <label for="team2-name">Nombre Equipo 2:</label>
-                        <input type="text" id="team2-name" placeholder="Ej: Barcelona">
-                    </div>
-                    <div class="form-group">
-                        <label for="team2-shield">Escudo Equipo 2 (URL):</label>
-                        <input type="text" id="team2-shield" placeholder="URL del escudo">
-                    </div>
-                    <div class="form-group">
-                        <label for="match-date">Fecha y Hora:</label>
-                        <input type="datetime-local" id="match-date">
-                    </div>
-                    <div class="form-group">
-                        <label for="match-league">Liga/Torneo:</label>
-                        <input type="text" id="match-league" placeholder="Ej: Champions League">
-                    </div>
-                    
-                    <!-- Nuevos campos para controles avanzados -->
-                    <div class="form-group">
-                        <label for="match-stage">Etapa del Torneo:</label>
-                        <select id="match-stage">
-                            <option value="Fase de Grupos">Fase de Grupos</option>
-                            <option value="Octavos de Final">Octavos de Final</option>
-                            <option value="Cuartos de Final">Cuartos de Final</option>
-                            <option value="Semifinal">Semifinal</option>
-                            <option value="Final">Final</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="match-type">Tipo de Partido:</label>
-                        <select id="match-type">
-                            <option value="Partido Único">Partido Único</option>
-                            <option value="Partido de Ida">Partido de Ida</option>
-                            <option value="Partido de Vuelta">Partido de Vuelta</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="global-score">Marcador Global:</label>
-                        <input type="text" id="global-score" placeholder="Ej: 1-0">
-                        <small style="font-size: 0.8em; color: #6c757d;">(Solo si es un partido de vuelta. Ej: 2-1)</small>
-                    </div>
-                    
-                    <button id="create-match-btn" class="btn">Crear Partido</button>
-                    
-                    <div id="live-admin-container" style="display: none;">
-                        <h3 style="margin-top: 20px;">Controles del Partido en Vivo</h3>
-                        <div class="admin-controls">
-                            <!-- Botones de eventos -->
-                            <h4 style="color: var(--primary-color);">Eventos</h4>
-                            <div class="event-input-group">
-                                <div class="event-form-group">
-                                    <label for="event-type">Tipo de Evento:</label>
-                                    <select id="event-type">
-                                        <option value="">Selecciona un evento</option>
-                                        <option value="Gol Equipo 1">Gol Equipo 1</option>
-                                        <option value="Gol Equipo 2">Gol Equipo 2</option>
-                                        <option value="Tiro Libre">Tiro Libre</option>
-                                        <option value="Penal">Penal</option>
-                                        <option value="Travesaño">Travesaño</option>
-                                        <option value="Errado">Errado</option>
-                                        <option value="Cambios">Cambios</option>
-                                        <option value="Lesion">Lesión</option>
-                                        <option value="Tarjeta amarilla">Tarjeta Amarilla</option>
-                                        <option value="Tarjeta roja">Tarjeta Roja</option>
-                                    </select>
-                                </div>
-                                <div id="player-event-input-group" class="event-form-group" style="display:none;">
-                                    <label for="event-player-name">Nombre Jugador:</label>
-                                    <input type="text" id="event-player-name" placeholder="Nombre">
-                                    <label for="event-player-number">Dorsal:</label>
-                                    <input type="number" id="event-player-number" placeholder="Dorsal">
-                                    <label for="event-team-select" style="display:none;">Equipo:</label>
-                                    <select id="event-team-select" style="display:none;"></select>
-                                </div>
-                                <button id="add-event-btn" class="btn">Añadir Evento</button>
-                            </div>
-
-                            <!-- Botones de control de tiempo -->
-                            <h4 style="color: var(--primary-color);">Control de Tiempo</h4>
-                            <div class="admin-match-controls">
-                                <button id="pause-match-btn" class="btn">Descanso</button>
-                                <button id="resume-match-btn" class="btn" style="display: none;">Reanudar</button>
-                                <button id="suspend-match-btn" class="btn red">Suspender Partido</button>
-                            </div>
-
-                            <button id="end-match-btn" class="btn red">Finalizar Partido</button>
+                <div id="admin-panel" style="display:none;">
+                    <h2>Panel de Administración</h2>
+                    <div class="form-container">
+                        <h3>Añadir Nuevo Partido</h3>
+                        <div class="form-group">
+                            <label for="team1-name">Nombre del Equipo 1</label>
+                            <input type="text" id="team1-name" placeholder="Ej: Real Madrid">
                         </div>
+                        <div class="form-group">
+                            <label for="team1-shield">Escudo del Equipo 1 (URL)</label>
+                            <input type="text" id="team1-shield" placeholder="Ej: https://...">
+                        </div>
+                        <div class="form-group">
+                            <label for="team2-name">Nombre del Equipo 2</label>
+                            <input type="text" id="team2-name" placeholder="Ej: Barcelona">
+                        </div>
+                        <div class="form-group">
+                            <label for="team2-shield">Escudo del Equipo 2 (URL)</label>
+                            <input type="text" id="team2-shield" placeholder="Ej: https://...">
+                        </div>
+                        <div class="form-group">
+                            <label for="match-date">Fecha del Partido</label>
+                            <input type="date" id="match-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="match-time">Hora del Partido</label>
+                            <input type="time" id="match-time">
+                        </div>
+                        <div class="form-group">
+                            <label for="match-type">Tipo de Partido</label>
+                            <select id="match-type">
+                                <option value="Fechas">Fechas</option>
+                                <option value="Torneos">Torneos</option>
+                                <option value="Copa Juvenil">Copa Juvenil</option>
+                            </select>
+                        </div>
+                        <button id="add-match-btn" class="btn">Añadir Partido</button>
                     </div>
                 </div>
             </section>
         </main>
-
-        <!-- Modals -->
-        <div id="message-modal" class="modal-overlay" style="display: none;">
-            <div class="modal-content">
-                <h3 id="modal-title"></h3>
-                <p id="modal-message"></p>
-                <div class="modal-buttons">
-                    <button id="modal-close-btn" class="btn">Cerrar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="confirm-modal" class="modal-overlay" style="display: none;">
-            <div class="modal-content">
-                <h3 id="confirm-title"></h3>
-                <p id="confirm-message"></p>
-                <div class="modal-buttons">
-                    <button id="confirm-cancel-btn" class="btn">Cancelar</button>
-                    <button id="confirm-ok-btn" class="btn red">Aceptar</button>
-                </div>
-            </div>
-        </div>
-        
-        <div id="event-modal" class="modal-overlay" style="display: none;">
-            <div class="modal-content event-modal-content">
-                <h3 id="event-modal-title">Eventos del Partido</h3>
-                <div class="event-log-container" id="event-log-container">
-                    <!-- Los eventos se inyectarán aquí dinámicamente -->
-                </div>
-                <div class="modal-buttons">
-                    <button id="event-modal-close-btn" class="btn">Cerrar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="suspend-modal" class="modal-overlay" style="display:none;">
-            <div class="modal-content">
-                <h3>Suspender Partido</h3>
-                <div class="form-group">
-                    <label for="suspension-reason">Razón de la suspensión:</label>
-                    <input type="text" id="suspension-reason" placeholder="Ej: Lluvia intensa">
-                </div>
-                <div class="modal-buttons">
-                    <button id="suspend-cancel-btn" class="btn">Cancelar</button>
-                    <button id="suspend-confirm-btn" class="btn red">Suspender</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="spinner" id="spinner"></div>
-
     </div>
-    
-    <!-- Scripts de Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Variables globales (Asegúrate de que estas sean definidas en tu archivo firebase-config.js)
-        const firebaseConfig = window.__firebase_config;
-        const appId = window.__app_id;
-
-        // Inicialización de Firebase (NO TOCAR)
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Variables de estado
-        let user;
-        let currentLiveMatchId = null;
-        let activeTab = 'Fechas';
-        let matchTimerInterval;
-        let timerStartTime;
-        let timerPausedTime = 0;
-        let matchSuspended = false;
-        let suspensionReason = '';
-
-        // Funciones de utilidad para el diseño
-        function showMessage(title, message) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-message').textContent = message;
-            document.getElementById('message-modal').style.display = 'flex';
-        }
-
-        function showModal(modalId) {
-            document.getElementById(modalId + '-modal').style.display = 'flex';
-        }
-
-        function hideModal(modalId) {
-            document.getElementById(modalId + '-modal').style.display = 'none';
-        }
-
-        // Función para mostrar/ocultar spinner de carga
-        function showSpinner() {
-            document.getElementById('spinner').style.display = 'block';
-        }
-
-        function hideSpinner() {
-            document.getElementById('spinner').style.display = 'none';
-        }
-
-        // Función para renderizar partidos en vivo
-        function renderLiveMatch(match) {
-            const container = document.getElementById('live-matches-container');
-            container.innerHTML = ''; // Limpiar el contenedor
-            
-            const liveMatchCard = document.createElement('div');
-            liveMatchCard.className = 'live-match-card';
-            liveMatchCard.setAttribute('data-id', match.id);
-
-            // Determinar el texto a mostrar en el marcador
-            const scoreText = match.isSuspended && match.suspensionReason 
-                ? `<div class="suspension-text">PARTIDO SUSPENDIDO<br>${match.suspensionReason}</div>`
-                : `<span id="score-team1">${match.score1}</span><span id="score-separator">-</span><span id="score-team2">${match.score2}</span>`;
-
-            // Ocultar el guion del marcador cuando hay una etapa y un tipo de partido
-            const scoreContainerClass = `score-container ${match.stage || match.matchType ? 'with-info' : ''}`;
-
-            liveMatchCard.innerHTML = `
+    <div id="message-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="message-modal-title"></h3>
+            <p id="message-modal-message"></p>
+            <div class="modal-buttons">
+                <button id="modal-close-btn" class="btn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirm-modal-title"></h3>
+            <p id="confirm-modal-message"></p>
+            <div class="modal-buttons">
+                <button id="confirm-cancel-btn" class="btn">Cancelar</button>
+                <button id="confirm-ok-btn" class="btn red">Aceptar</button>
+            </div>
+        </div>
+    </div>
+    <div id="match-control-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="control-modal-title">Control de Partido</h3>
+            <div id="control-match-card" class="live-match-card">
                 <div class="match-header">
                     <div class="team">
-                        <img src="${match.team1.shield}" alt="${match.team1.name} shield" class="team-shield">
-                        <span class="team-name">${match.team1.name}</span>
+                        <img id="control-team1-shield" src="" alt="Equipo 1" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                        <span id="control-team1-name" class="team-name">Equipo 1</span>
                     </div>
                     <div class="score-container">
-                         <span class="global-score-text" style="display: none;"></span>
+                        <span id="control-team1-score">0</span>
+                        -
+                        <span id="control-team2-score">0</span>
                     </div>
                     <div class="team">
-                        <img src="${match.team2.shield}" alt="${match.team2.name} shield" class="team-shield">
-                        <span class="team-name">${match.team2.name}</span>
+                        <img id="control-team2-shield" src="" alt="Equipo 2" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                        <span id="control-team2-name" class="team-name">Equipo 2</span>
                     </div>
                 </div>
-                <!-- Contador de tiempo centrado -->
-                <div class="match-timer" id="match-timer">00:00</div>
-                <!-- Información de etapa y tipo de partido -->
-                <div class="match-details with-info">
-                    <span class="section-name" id="stage-info"><i class="fas fa-flag"></i>${match.stage}</span>
-                    <span class="section-name" id="match-type-info"><i class="fas fa-exchange-alt"></i>${match.matchType}</span>
-                </div>
-                <!-- Marcador global -->
-                <div class="global-score-section" id="global-score-info" style="display: ${match.globalScore ? 'flex' : 'none'};">
-                    Marcador Global:
-                    <div class="global-score-box">${match.globalScore}</div>
-                </div>
-                
-                <div id="live-controls" style="display: none;">
-                    <h3>Controles del Partido</h3>
-                    <div class="admin-controls">
-                        <div class="score-controls">
-                            <button class="btn" onclick="updateScore('${match.id}', 1, 0)"><i class="fas fa-plus"></i></button>
-                            <button class="btn" onclick="updateScore('${match.id}', -1, 0)"><i class="fas fa-minus"></i></button>
-                            <button class="btn" onclick="updateScore('${match.id}', 0, 1)"><i class="fas fa-plus"></i></button>
-                            <button class="btn" onclick="updateScore('${match.id}', 0, -1)"><i class="fas fa-minus"></i></button>
-                        </div>
-                        <div class="card-controls">
-                            <button class="btn" onclick="addCard('${match.id}', 'yellow')"><i class="fas fa-credit-card" style="color: yellow;"></i></button>
-                            <button class="btn" onclick="addCard('${match.id}', 'red')"><i class="fas fa-credit-card" style="color: red;"></i></button>
-                        </div>
-                        <div class="match-event-panel">
-                            <input type="text" id="player-event-input" placeholder="Descripción del evento...">
-                            <button id="add-event-btn" class="btn">Añadir Evento</button>
-                        </div>
-                        <button id="end-match-btn" class="btn red">Finalizar Partido</button>
+                <div class="match-details">
+                    <div class="match-time">Tiempo: <span id="control-match-time">00:00</span></div>
+                    <div class="match-date">
+                        <i class="fas fa-clock"></i> <span id="control-match-date"></span>
                     </div>
                 </div>
-                
-                <!-- Botón para ver eventos -->
-                <button id="show-events-btn" class="btn" style="background-color: var(--accent-color); margin-top: 15px;">Ver Eventos</button>
-            `;
-            container.appendChild(liveMatchCard);
-
-            // Reemplazar el marcador con el texto de suspensión si es necesario
-            const scoreContainer = liveMatchCard.querySelector('.score-container');
-            if (match.isSuspended) {
-                scoreContainer.innerHTML = scoreText;
-            } else {
-                scoreContainer.innerHTML = `<span id="score-team1">${match.score1}</span><span style="font-size: 1.5em; color: var(--text-color); font-weight: 400;">-</span><span id="score-team2">${match.score2}</span>`;
-            }
-
-            // Actualizar la información en vivo
-            document.getElementById('stage-info').innerHTML = `<i class="fas fa-flag"></i>${match.isSuspended ? 'Partido Suspendido' : match.stage}`;
-            document.getElementById('match-type-info').innerHTML = `<i class="fas fa-exchange-alt"></i>${match.isSuspended ? match.suspensionReason : match.matchType}`;
-            
-            // Mostrar los controles de admin si el usuario es admin
-            if (user && user.uid === 'admin_id_here') { // Reemplazar con el ID de usuario de tu admin
-                document.getElementById('live-controls').style.display = 'flex';
-                // Ocultar el botón de "Controlar" en partidos en vivo, ahora se llama "Activar"
-                const activateBtn = liveMatchCard.querySelector('.admin-only-btn');
-                if (activateBtn) activateBtn.textContent = 'Activar';
-            }
-            
-            // Lógica para el botón "Ver Eventos"
-            liveMatchCard.querySelector('#show-events-btn').addEventListener('click', () => {
-                showEventsModal(match.id, match.team1.name, match.team2.name);
-            });
-        }
-        
-        // Función para renderizar partidos agendados
-        function renderUpcomingMatches(matches) {
-            const container = document.getElementById('upcoming-matches-container');
-            container.innerHTML = '';
-            if (matches.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos agendados.</p>`;
-                return;
-            }
-            matches.forEach(match => {
-                const card = document.createElement('div');
-                card.className = 'upcoming-match-card';
-                card.innerHTML = `
-                    <div class="match-header">
-                        <div class="team">
-                            <img src="${match.team1.shield}" alt="${match.team1.name} shield" class="team-shield">
-                            <span class="team-name">${match.team1.name}</span>
-                        </div>
-                        <div class="score-container">
-                            <span style="font-size: 1.5em;">VS</span>
-                        </div>
-                        <div class="team">
-                            <img src="${match.team2.shield}" alt="${match.team2.name} shield" class="team-shield">
-                            <span class="team-name">${match.team2.name}</span>
-                        </div>
+                <div class="admin-controls">
+                    <div class="score-controls">
+                        <button id="control-add-goal1" class="btn">+</button>
+                        <button id="control-add-goal2" class="btn">+</button>
                     </div>
-                    <div class="match-details">
-                        <span class="date"><i class="far fa-clock"></i> ${new Date(match.date).toLocaleString()}</span>
-                        <span class="section-name"><i class="fas fa-futbol"></i> ${match.league}</span>
+                    <div class="card-controls">
+                        <button id="control-add-yellow1" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red1" class="btn red"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-yellow2" class="btn" style="background-color: #FFC107;"><i class="fas fa-credit-card"></i></button>
+                        <button id="control-add-red2" class="btn red"><i class="fas fa-credit-card"></i></button>
                     </div>
-                    <!-- Información de etapa y tipo de partido -->
-                    <div class="match-details">
-                        <span class="section-name"><i class="fas fa-flag"></i>${match.stage}</span>
-                        <span class="section-name"><i class="fas fa-exchange-alt"></i>${match.matchType}</span>
+                    <div class="player-input-group">
+                        <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Messi)">
+                        <button id="add-event-btn" class="btn" style="width: auto;"><i class="fas fa-plus"></i></button>
                     </div>
-                    <!-- Marcador global -->
-                    <div class="global-score-section" id="global-score-info" style="display: ${match.globalScore ? 'flex' : 'none'};">
-                        Marcador Global:
-                        <div class="global-score-box">${match.globalScore}</div>
+                    <div class="event-log-container">
+                        <h3>Eventos del Partido</h3>
+                        <ul id="event-log" class="event-log"></ul>
                     </div>
-                    <div style="text-align: right;">
-                        <button class="admin-only-btn activate-btn" data-id="${match.id}">Activar Partido</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            // Añadir event listener a los botones de "Activar Partido"
-            container.querySelectorAll('.activate-btn').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    if (!user || user.uid !== 'admin_id_here') {
-                        showMessage('Acceso Denegado', 'Solo el administrador puede activar un partido.');
-                        return;
-                    }
-                    const matchId = e.target.getAttribute('data-id');
-                    showSpinner();
-                    try {
-                        await updateMatchState(matchId, { isLive: true, isFinished: false, startTime: Date.now(), isSuspended: false, suspensionReason: '' });
-                        showMessage('Éxito', '¡Partido activado!');
-                        hideSpinner();
-                        navigateTo('inicio');
-                    } catch (error) {
-                        console.error("Error al activar partido:", error);
-                        showMessage('Error', 'No se pudo activar el partido. Por favor, inténtalo de nuevo.');
-                        hideSpinner();
-                    }
-                });
-            });
-        }
-        
-        // Función para renderizar partidos finalizados
-        function renderFinishedMatches(matches) {
-            const container = document.getElementById('finished-matches-container');
-            container.innerHTML = '';
-            if (matches.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos finalizados.</p>`;
-                return;
-            }
-            matches.forEach(match => {
-                const card = document.createElement('div');
-                card.className = 'match-stats-card';
-                card.innerHTML = `
-                    <div class="match-header">
-                        <div class="team">
-                            <img src="${match.team1.shield}" alt="${match.team1.name} shield" class="team-shield">
-                            <span class="team-name">${match.team1.name}</span>
-                        </div>
-                        <div class="score-container" style="position: relative;">
-                            <span>${match.score1}</span>
-                            <span style="font-size: 1.5em; color: var(--text-color); font-weight: 400;">-</span>
-                            <span>${match.score2}</span>
-                        </div>
-                        <div class="team">
-                            <img src="${match.team2.shield}" alt="${match.team2.name} shield" class="team-shield">
-                            <span class="team-name">${match.team2.name}</span>
-                        </div>
-                    </div>
-                    <div class="match-details">
-                        <span class="date"><i class="far fa-calendar-alt"></i> ${new Date(match.date).toLocaleDateString()}</span>
-                        <span class="section-name"><i class="fas fa-futbol"></i> ${match.league}</span>
-                    </div>
-                     <!-- Información de etapa y tipo de partido -->
-                    <div class="match-details">
-                        <span class="section-name"><i class="fas fa-flag"></i>${match.stage}</span>
-                        <span class="section-name"><i class="fas fa-exchange-alt"></i>${match.matchType}</span>
-                    </div>
-                    <!-- Marcador global -->
-                    <div class="global-score-section" id="global-score-info" style="display: ${match.globalScore ? 'flex' : 'none'};">
-                        Marcador Global:
-                        <div class="global-score-box">${match.globalScore}</div>
-                    </div>
-                    <div style="text-align: right; margin-top: 15px;">
-                        <button class="btn red delete-finished-btn" data-id="${match.id}">Eliminar</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-            
-            // Añadir event listener para el botón de "Eliminar"
-            container.querySelectorAll('.delete-finished-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const matchId = e.target.getAttribute('data-id');
-                    showConfirmModal('Eliminar Partido', '¿Estás seguro de que quieres eliminar este partido de forma permanente?', () => {
-                        deleteMatch(matchId);
-                    });
-                });
-            });
-        }
-        
-        // Función para mostrar modal de confirmación
-        function showConfirmModal(title, message, onConfirm) {
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-message').textContent = message;
-            showModal('confirm');
-            
-            const confirmBtn = document.getElementById('confirm-ok-btn');
-            const cancelBtn = document.getElementById('confirm-cancel-btn');
-
-            confirmBtn.onclick = () => {
-                onConfirm();
-                hideModal('confirm');
-            };
-            cancelBtn.onclick = () => {
-                hideModal('confirm');
-            };
-        }
-
-        // Función para actualizar el estado del partido en Firebase
-        async function updateMatchState(matchId, data, eventDescription) {
-            const matchRef = doc(db, 'matches', matchId);
-            try {
-                const updateData = { ...data };
-                if (eventDescription) {
-                    updateData.events = [
-                        ...(await getDoc(matchRef)).data().events || [],
-                        {
-                            description: eventDescription,
-                            timestamp: serverTimestamp()
-                        }
-                    ];
-                }
-                await updateDoc(matchRef, updateData);
-            } catch (error) {
-                console.error("Error updating match state:", error);
-                showMessage('Error de Sincronización', 'No se pudo actualizar el estado del partido.');
-            }
-        }
-        
-        // Función para eliminar un partido finalizado
-        async function deleteMatch(matchId) {
-            showSpinner();
-            try {
-                const matchRef = doc(db, 'matches', matchId);
-                await deleteDoc(matchRef);
-                showMessage('Éxito', 'Partido eliminado correctamente.');
-            } catch (error) {
-                console.error("Error deleting match:", error);
-                showMessage('Error', 'No se pudo eliminar el partido. Por favor, inténtalo de nuevo.');
-            } finally {
-                hideSpinner();
-            }
-        }
-        
-        // Función para actualizar el marcador del partido
-        async function updateScore(matchId, team1Increment, team2Increment) {
-            try {
-                const matchRef = doc(db, 'matches', matchId);
-                const matchSnap = await getDoc(matchRef);
-                if (matchSnap.exists()) {
-                    const matchData = matchSnap.data();
-                    const newScore1 = Math.max(0, (matchData.score1 || 0) + team1Increment);
-                    const newScore2 = Math.max(0, (matchData.score2 || 0) + team2Increment);
-                    await updateDoc(matchRef, { score1: newScore1, score2: newScore2 });
-                }
-            } catch (error) {
-                console.error("Error updating score:", error);
-                showMessage('Error de Sincronización', 'No se pudo actualizar el marcador.');
-            }
-        }
-        
-        // Función para añadir una tarjeta
-        async function addCard(matchId, cardType) {
-            try {
-                const matchRef = doc(db, 'matches', matchId);
-                const eventDescription = cardType === 'yellow' ? 'Tarjeta Amarilla' : 'Tarjeta Roja';
-                await updateMatchState(matchId, {}, eventDescription);
-            } catch (error) {
-                console.error("Error adding card:", error);
-                showMessage('Error de Sincronización', 'No se pudo añadir la tarjeta.');
-            }
-        }
-
-        // Función para iniciar el temporizador
-        function startTimer(startTime) {
-            if (matchTimerInterval) clearInterval(matchTimerInterval);
-
-            timerStartTime = startTime;
-            
-            matchTimerInterval = setInterval(() => {
-                const now = Date.now();
-                const elapsedSeconds = Math.floor((now - timerStartTime) / 1000) + timerPausedTime;
-                const minutes = Math.floor(elapsedSeconds / 60);
-                const seconds = elapsedSeconds % 60;
-                
-                const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                const timerDisplay = document.getElementById('match-timer');
-                if (timerDisplay) {
-                    timerDisplay.textContent = formattedTime;
-                }
-            }, 1000);
-        }
-
-        // Función para pausar el temporizador
-        function pauseTimer() {
-            if (matchTimerInterval) {
-                clearInterval(matchTimerInterval);
-                const now = Date.now();
-                const elapsedSeconds = Math.floor((now - timerStartTime) / 1000);
-                timerPausedTime += elapsedSeconds;
-                timerStartTime = now;
-            }
-        }
-
-        // Función para mostrar el modal de eventos
-        async function showEventsModal(matchId, team1Name, team2Name) {
-            const eventContainer = document.getElementById('event-log-container');
-            eventContainer.innerHTML = `
-                <div class="event-log-team" id="team1-events">
-                    <h4>Eventos de ${team1Name}</h4>
-                    <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando eventos...</p>
                 </div>
-                <div class="event-log-team" id="team2-events">
-                    <h4>Eventos de ${team2Name}</h4>
-                    <p style="text-align: center; color: rgba(0, 0, 0, 0.5);">Cargando eventos...</p>
+                <div class="modal-buttons" style="justify-content: space-between;">
+                    <button id="end-match-btn" class="btn red">Finalizar Partido</button>
+                    <button id="control-close-btn" class="btn">Cerrar</button>
                 </div>
-            `;
-            showModal('event');
-            
-            const matchRef = doc(db, 'matches', matchId);
-            onSnapshot(matchRef, (doc) => {
-                if (doc.exists()) {
-                    const matchData = doc.data();
-                    renderEvents(matchData.events || [], team1Name, team2Name);
-                } else {
-                    console.log("No such document!");
-                }
-            });
-        }
+            </div>
+        </div>
+    </div>
+    <div id="spinner" class="spinner"></div>
+    <script type="module">
+        // Importa las funciones y variables desde el archivo de configuración de Firebase
+        import { db, auth, onSnapshot, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, onAuthStateChanged, addDoc } from "./firebase-config.js";
 
-        // Función para renderizar los eventos en el modal
-        function renderEvents(events, team1Name, team2Name) {
-            const team1EventsDiv = document.getElementById('team1-events');
-            const team2EventsDiv = document.getElementById('team2-events');
-            
-            team1EventsDiv.innerHTML = `<h4>Eventos de ${team1Name}</h4>`;
-            team2EventsDiv.innerHTML = `<h4>Eventos de ${team2Name}</h4>`;
-            
-            // Ordenar eventos por timestamp de forma descendente
-            const sortedEvents = [...events].sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
+        // Variables de estado
+        let currentLiveMatchId = null;
+        let matchTimerInterval = null;
 
-            sortedEvents.forEach(event => {
-                const eventItem = document.createElement('div');
-                eventItem.className = 'event-item';
-                
-                let iconClass = 'fas fa-futbol';
-                let eventText = event.description;
-                let teamContainer;
-
-                // Asignar icono y contenedor según el tipo de evento
-                if (eventText.includes('Gol Equipo 1')) {
-                    iconClass = 'fas fa-futbol';
-                    teamContainer = team1EventsDiv;
-                    eventItem.classList.add('team1-event');
-                } else if (eventText.includes('Gol Equipo 2')) {
-                    iconClass = 'fas fa-futbol';
-                    teamContainer = team2EventsDiv;
-                    eventItem.classList.add('team2-event');
-                } else if (eventText.includes('Tarjeta Amarilla')) {
-                    iconClass = 'fas fa-credit-card';
-                    eventItem.style.color = 'var(--accent-color)';
-                    teamContainer = eventText.includes(team1Name) ? team1EventsDiv : team2EventsDiv;
-                    eventItem.classList.add(eventText.includes(team1Name) ? 'team1-event' : 'team2-event');
-                } else if (eventText.includes('Tarjeta Roja')) {
-                    iconClass = 'fas fa-credit-card';
-                    eventItem.style.color = '#dc3545';
-                    teamContainer = eventText.includes(team1Name) ? team1EventsDiv : team2EventsDiv;
-                    eventItem.classList.add(eventText.includes(team1Name) ? 'team1-event' : 'team2-event');
-                } else if (eventText.includes('Cambio')) {
-                    iconClass = 'fas fa-sync-alt';
-                    teamContainer = eventText.includes(team1Name) ? team1EventsDiv : team2EventsDiv;
-                    eventItem.classList.add(eventText.includes(team1Name) ? 'team1-event' : 'team2-event');
-                } else {
-                    teamContainer = team1EventsDiv;
-                }
-
-                const timestamp = event.timestamp ? new Date(event.timestamp.toMillis()).toLocaleTimeString() : 'Ahora';
-
-                eventItem.innerHTML = `
-                    <i class="${iconClass} event-icon"></i>
-                    <div class="event-item-text">
-                        <span>${eventText}</span>
-                        <div class="event-timestamp">${timestamp}</div>
-                    </div>
-                `;
-                
-                // Animación de aparición
-                setTimeout(() => {
-                    eventItem.style.opacity = '1';
-                    eventItem.style.transform = 'translateY(0)';
-                }, 50);
-
-                if (teamContainer) {
-                    teamContainer.appendChild(eventItem);
-                }
-            });
-            
-            // Si no hay eventos, mostrar un mensaje
-            if (events.length === 0) {
-                team1EventsDiv.innerHTML = `<h4>Eventos de ${team1Name}</h4><p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay eventos.</p>`;
-                team2EventsDiv.innerHTML = `<h4>Eventos de ${team2Name}</h4><p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay eventos.</p>`;
-            }
-        }
-
-        // Listener para los eventos del admin
-        document.getElementById('event-type').addEventListener('change', (e) => {
-            const eventType = e.target.value;
-            const playerInputGroup = document.getElementById('player-event-input-group');
-            const teamSelect = document.getElementById('event-team-select');
-            
-            playerInputGroup.style.display = 'none';
-            teamSelect.style.display = 'none';
-            
-            // Eventos que requieren nombre y dorsal
-            if (['Gol Equipo 1', 'Gol Equipo 2', 'Cambios', 'Lesion', 'Tarjeta amarilla', 'Tarjeta roja'].includes(eventType)) {
-                playerInputGroup.style.display = 'flex';
-                // El equipo ya está implícito en el evento
-            } else if (['Tiro Libre', 'Penal', 'Travesaño', 'Errado'].includes(eventType)) {
-                playerInputGroup.style.display = 'flex';
-                teamSelect.style.display = 'block';
-                // Llenar las opciones del select de equipos
-                const liveMatchData = JSON.parse(localStorage.getItem('liveMatchData'));
-                if (liveMatchData) {
-                    teamSelect.innerHTML = `<option value="">Seleccionar Equipo</option><option value="${liveMatchData.team1.name}">${liveMatchData.team1.name}</option><option value="${liveMatchData.team2.name}">${liveMatchData.team2.name}</option>`;
-                }
-            }
-        });
-
-        // Controles de navegación
-        document.querySelectorAll('.nav-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const section = button.getAttribute('data-section');
-                navigateTo(section);
-            });
-        });
-
-        function navigateTo(section) {
-            document.querySelectorAll('section').forEach(sec => {
-                sec.style.display = 'none';
-            });
-            document.getElementById(section).style.display = 'block';
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`.nav-btn[data-section="${section}"]`).classList.add('active');
-        }
-
-        // Controles de pestañas en Fechas
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                activeTab = e.target.getAttribute('data-tab');
-                fetchUpcomingMatches();
-            });
-        });
-
-        // Listeners
+        // Se ejecuta solo cuando el DOM (la estructura HTML) ha sido completamente cargado.
         document.addEventListener('DOMContentLoaded', () => {
-            // Manejador del botón de crear partido
-            document.getElementById('create-match-btn').addEventListener('click', async () => {
-                if (!user || user.uid !== 'admin_id_here') {
-                    showMessage('Acceso Denegado', 'Solo el administrador puede crear partidos.');
+            console.log("DOM Cargado. Esperando autenticación de Firebase.");
+
+            // Selectores de elementos
+            const sections = document.querySelectorAll('section');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const liveMatchesContainer = document.getElementById('live-matches-container');
+            const upcomingMatchesContainer = document.getElementById('upcoming-matches-container');
+            const finishedMatchesContainer = document.getElementById('finished-matches-container');
+            const adminLogin = document.getElementById('admin-login');
+            const adminPanel = document.getElementById('admin-panel');
+            const adminPasswordInput = document.getElementById('admin-password');
+            const loginBtn = document.getElementById('login-btn');
+            const addMatchBtn = document.getElementById('add-match-btn');
+            const spinner = document.getElementById('spinner');
+
+            // Funciones de utilidad para la UI
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
+            }
+
+            function showModal(type, title, message, onConfirm = null) {
+                const modal = document.getElementById(`${type}-modal`);
+                if (!modal) return;
+                const titleElement = modal.querySelector('h3');
+                const messageElement = modal.querySelector('p');
+                if (titleElement) titleElement.textContent = title;
+                if (messageElement) messageElement.textContent = message;
+                modal.style.display = 'flex';
+                const confirmBtn = document.getElementById('confirm-ok-btn');
+                if (type === 'confirm' && onConfirm) {
+                    confirmBtn.onclick = onConfirm;
+                }
+            }
+
+            function hideModal(type) {
+                const modal = document.getElementById(`${type}-modal`);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                if (type === 'control' && matchTimerInterval) {
+                    clearInterval(matchTimerInterval);
+                    matchTimerInterval = null;
+                }
+                currentLiveMatchId = null;
+            }
+
+            function showSpinner() { spinner.style.display = 'flex'; }
+            function hideSpinner() { spinner.style.display = 'none'; }
+            function showMessage(title, message) { showModal('message', title, message); }
+            
+            // Función para actualizar el estado del partido en Firestore
+            async function updateMatchState(matchId, updates, eventDesc = "", isLive = true) {
+                if (!db) { showMessage("Error", "La base de datos no está disponible. Intenta refrescar la página."); return; }
+                showSpinner();
+                try {
+                    const matchRef = doc(collection(db, `matches`), matchId);
+                    await updateDoc(matchRef, { ...updates, isLive: isLive });
+                    if (eventDesc) {
+                        const eventRef = collection(db, `matches/${matchId}/events`);
+                        await addDoc(eventRef, {
+                            description: eventDesc,
+                            timestamp: new Date()
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error al actualizar el estado del partido: ", e);
+                    showMessage("Error", "No se pudo actualizar el partido.");
+                } finally {
+                    hideSpinner();
+                }
+            }
+
+            // Función para renderizar los partidos
+            function renderMatches(container, matches) {
+                container.innerHTML = '';
+                if (matches.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos para mostrar.</p>';
                     return;
                 }
+                matches.forEach(match => {
+                    const matchElement = document.createElement('div');
+                    matchElement.className = 'live-match-card';
+                    matchElement.innerHTML = `
+                        <div class="match-header">
+                            <div class="team">
+                                <img src="${match.team1.shield}" alt="${match.team1.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                <span class="team-name">${match.team1.name}</span>
+                            </div>
+                            <div class="score-container">
+                                <span>${match.score1}</span>
+                                -
+                                <span>${match.score2}</span>
+                            </div>
+                            <div class="team">
+                                <img src="${match.team2.shield}" alt="${match.team2.name}" class="team-shield" onerror="this.onerror=null;this.src='https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC'">
+                                <span class="team-name">${match.team2.name}</span>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-time">Tiempo: <span>${match.time}</span></div>
+                            <div class="match-date">
+                                <i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div class="admin-actions" style="display:none;">
+                            <button class="btn control-btn" data-match-id="${match.id}">Controlar</button>
+                            <button class="btn delete-btn red" data-match-id="${match.id}">Eliminar</button>
+                        </div>
+                    `;
+                    container.appendChild(matchElement);
+                });
+                updateAdminView();
+            }
 
+            // Manejo de eventos de la UI
+            navButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const sectionId = e.currentTarget.dataset.section;
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    showSection(sectionId);
+                });
+            });
+
+            // Lógica de administrador
+            let isAdmin = false;
+            const ADMIN_PASSWORD = "adminpass"; // Contraseña de admin estática
+
+            loginBtn.addEventListener('click', () => {
+                if (adminPasswordInput.value === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    adminLogin.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    updateAdminView();
+                } else {
+                    showMessage("Error de Autenticación", "Contraseña incorrecta.");
+                    adminPasswordInput.value = '';
+                }
+            });
+
+            function updateAdminView() {
+                const adminActionButtons = document.querySelectorAll('.admin-actions');
+                adminActionButtons.forEach(btn => {
+                    btn.style.display = isAdmin ? 'flex' : 'none';
+                });
+            }
+
+            // Lógica de Firebase
+            // Se usa onAuthStateChanged para asegurarse de que Firebase está listo y autenticado
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    console.log("Autenticación de Firebase lista. Conectando a la base de datos.");
+                    const matchesRef = collection(db, `matches`);
+                    
+                    // Listener para todos los partidos (en vivo, próximos, finalizados)
+                    onSnapshot(matchesRef, (snapshot) => {
+                        const liveMatches = [];
+                        const upcomingMatches = [];
+                        const finishedMatches = [];
+
+                        snapshot.docs.forEach(doc => {
+                            const matchData = { id: doc.id, ...doc.data() };
+                            if (matchData.isLive) {
+                                liveMatches.push(matchData);
+                            } else if (matchData.isFinished) {
+                                finishedMatches.push(matchData);
+                            } else {
+                                upcomingMatches.push(matchData);
+                            }
+                        });
+
+                        renderMatches(liveMatchesContainer, liveMatches);
+                        renderMatches(upcomingMatchesContainer, upcomingMatches);
+                        renderMatches(finishedMatchesContainer, finishedMatches);
+                        updateAdminView();
+                    });
+                } else {
+                    console.log("Usuario no autenticado. La aplicación se ejecutará en modo solo lectura.");
+                }
+            });
+
+            // Añadir nuevo partido
+            addMatchBtn.addEventListener('click', async () => {
+                if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                showSpinner();
                 const team1Name = document.getElementById('team1-name').value;
                 const team1Shield = document.getElementById('team1-shield').value;
                 const team2Name = document.getElementById('team2-name').value;
                 const team2Shield = document.getElementById('team2-shield').value;
                 const matchDate = document.getElementById('match-date').value;
-                const matchLeague = document.getElementById('match-league').value;
-                const matchStage = document.getElementById('match-stage').value;
+                const matchTime = document.getElementById('match-time').value;
                 const matchType = document.getElementById('match-type').value;
-                const globalScore = document.getElementById('global-score').value;
 
-                if (!team1Name || !team2Name || !matchDate || !matchLeague || !matchStage || !matchType) {
-                    showMessage('Error', 'Por favor, completa todos los campos para crear el partido.');
+                if (!team1Name || !team2Name || !matchDate || !matchTime) {
+                    showMessage("Error", "Por favor, completa todos los campos del formulario.");
+                    hideSpinner();
                     return;
                 }
 
-                showSpinner();
-
                 try {
-                    const newMatch = {
-                        team1: { name: team1Name, shield: team1Shield || 'https://placehold.co/60x60/8B5CF6/ffffff?text=E1' },
-                        team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/34D399/ffffff?text=E2' },
-                        date: new Date(matchDate).getTime(),
-                        league: matchLeague,
-                        stage: matchStage,
-                        matchType: matchType,
-                        globalScore: globalScore || null,
+                    await addDoc(collection(db, `matches`), {
+                        team1: { name: team1Name, shield: team1Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
+                        team2: { name: team2Name, shield: team2Shield || 'https://placehold.co/60x60/8B8B8B/FFFFFF?text=ESC' },
+                        date: new Date(`${matchDate}T${matchTime}`).toISOString(),
+                        type: matchType,
                         score1: 0,
                         score2: 0,
                         isLive: false,
                         isFinished: false,
-                        isSuspended: false,
-                        suspensionReason: '',
-                        events: [],
-                        createdAt: serverTimestamp()
-                    };
-                    await addDoc(collection(db, 'matches'), newMatch);
-                    showMessage('Éxito', '¡Partido creado y guardado en la sección de Fechas!');
-                    
-                    // Limpiar formulario
-                    document.getElementById('team1-name').value = '';
-                    document.getElementById('team1-shield').value = '';
-                    document.getElementById('team2-name').value = '';
-                    document.getElementById('team2-shield').value = '';
-                    document.getElementById('match-date').value = '';
-                    document.getElementById('match-league').value = '';
-                    document.getElementById('global-score').value = '';
-                } catch (error) {
-                    console.error("Error creating match:", error);
-                    showMessage('Error', 'No se pudo crear el partido. Por favor, inténtalo de nuevo.');
+                        time: '00:00',
+                        events: []
+                    });
+                    showMessage("Éxito", "Partido añadido correctamente.");
+                } catch (e) {
+                    console.error("Error al añadir partido: ", e);
+                    showMessage("Error", "No se pudo añadir el partido.");
                 } finally {
                     hideSpinner();
                 }
             });
+
+            // Control de partido (modal)
+            let matchTimerStart = null;
             
-            // Manejador del botón de añadir evento
+            document.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('control-btn')) {
+                    const matchId = e.target.dataset.matchId;
+                    if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                    showSpinner();
+                    try {
+                        const matchRef = doc(collection(db, `matches`), matchId);
+                        const docSnap = await getDoc(matchRef);
+                        if (docSnap.exists()) {
+                            const matchData = docSnap.data();
+                            currentLiveMatchId = matchId;
+                            // Actualizar el estado a 'en vivo' si no lo está
+                            if (!matchData.isLive) {
+                                await updateDoc(matchRef, { isLive: true, isFinished: false, time: '00:00' });
+                                // Establecer la hora de inicio en Firestore si es la primera vez que se controla
+                                await updateDoc(matchRef, { startTime: new Date().getTime() });
+                            }
+                            // Iniciar el modal y el timer
+                            showModal('control', 'Control de Partido', '');
+                            document.getElementById('control-team1-name').textContent = matchData.team1.name;
+                            document.getElementById('control-team2-name').textContent = matchData.team2.name;
+                            document.getElementById('control-team1-shield').src = matchData.team1.shield;
+                            document.getElementById('control-team2-shield').src = matchData.team2.shield;
+                            document.getElementById('control-team1-score').textContent = matchData.score1;
+                            document.getElementById('control-team2-score').textContent = matchData.score2;
+                            document.getElementById('control-match-date').textContent = new Date(matchData.date).toLocaleDateString();
+
+                            // Iniciar el listener del timer para actualizar el tiempo en tiempo real
+                            onSnapshot(matchRef, (doc) => {
+                                const data = doc.data();
+                                document.getElementById('control-team1-score').textContent = data.score1;
+                                document.getElementById('control-team2-score').textContent = data.score2;
+                                if (data.startTime) {
+                                    matchTimerStart = data.startTime;
+                                    if (matchTimerInterval) clearInterval(matchTimerInterval);
+                                    matchTimerInterval = setInterval(() => {
+                                        const now = new Date().getTime();
+                                        const elapsed = Math.floor((now - matchTimerStart) / 1000);
+                                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                                        const seconds = (elapsed % 60).toString().padStart(2, '0');
+                                        document.getElementById('control-match-time').textContent = `${minutes}:${seconds}`;
+                                    }, 1000);
+                                }
+                            });
+                            // Iniciar el listener para el log de eventos
+                            const eventsRef = collection(db, `matches/${matchId}/events`);
+                            onSnapshot(eventsRef, (eventSnapshot) => {
+                                const eventLogList = document.getElementById('event-log');
+                                eventLogList.innerHTML = '';
+                                eventSnapshot.docs.forEach(eventDoc => {
+                                    const eventData = eventDoc.data();
+                                    const li = document.createElement('li');
+                                    li.textContent = eventData.description;
+                                    eventLogList.appendChild(li);
+                                });
+                                // Scroll al final
+                                eventLogList.scrollTop = eventLogList.scrollHeight;
+                            });
+                        }
+                    } catch (e) {
+                        console.error("Error al obtener datos del partido: ", e);
+                        showMessage("Error", "No se pudo cargar el control del partido.");
+                    } finally {
+                        hideSpinner();
+                    }
+                } else if (e.target.classList.contains('delete-btn')) {
+                    const matchId = e.target.dataset.matchId;
+                    showModal('confirm', 'Confirmar Eliminación', '¿Estás seguro de que deseas eliminar este partido?', async () => {
+                        if (!db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                        showSpinner();
+                        try {
+                            const matchRef = doc(collection(db, `matches`), matchId);
+                            await deleteDoc(matchRef);
+                            showMessage("Éxito", "Partido eliminado correctamente.");
+                        } catch (e) {
+                            console.error("Error al eliminar partido: ", e);
+                            showMessage("Error", "No se pudo eliminar el partido.");
+                        } finally {
+                            hideSpinner();
+                            hideModal('confirm');
+                        }
+                    });
+                }
+            });
+
+            // Controladores de los botones del modal de control
+            document.getElementById('control-add-goal1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score1;
+                    await updateMatchState(currentLiveMatchId, { score1: currentScore + 1 }, "¡Gol del Equipo 1!");
+                }
+            });
+            document.getElementById('control-add-goal2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const currentScore = docSnap.data().score2;
+                    await updateMatchState(currentLiveMatchId, { score2: currentScore + 1 }, "¡Gol del Equipo 2!");
+                }
+            });
+            document.getElementById('control-add-yellow1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team1.name}.`);
+                }
+            });
+            document.getElementById('control-add-red1').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 1";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team1.name}.`);
+                }
+            });
+            document.getElementById('control-add-yellow2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Amarilla para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
+            document.getElementById('control-add-red2').addEventListener('click', async () => {
+                if (!currentLiveMatchId || !db) return;
+                const matchRef = doc(collection(db, `matches`), currentLiveMatchId);
+                const docSnap = await getDoc(matchRef);
+                if (docSnap.exists()) {
+                    const playerName = document.getElementById('player-event-input').value || "Jugador del Equipo 2";
+                    await updateMatchState(currentLiveMatchId, {}, `Tarjeta Roja para ${playerName} de ${docSnap.data().team2.name}.`);
+                }
+            });
             document.getElementById('add-event-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) {
-                    showMessage("Error", "La base de datos no está disponible o no hay un partido en vivo.");
-                    return;
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                const eventDesc = document.getElementById('player-event-input').value;
+                if (eventDesc) {
+                    await updateMatchState(currentLiveMatchId, {}, eventDesc);
+                    document.getElementById('player-event-input').value = '';
+                } else {
+                    showMessage("Error", "Por favor, ingresa una descripción para el evento.");
                 }
-                const eventType = document.getElementById('event-type').value;
-                const playerName = document.getElementById('event-player-name').value;
-                const playerNumber = document.getElementById('event-player-number').value;
-                const eventTeamSelect = document.getElementById('event-team-select');
-                
-                let eventDescription = eventType;
-                
-                if (['Gol Equipo 1', 'Gol Equipo 2', 'Cambios', 'Lesion', 'Tarjeta amarilla', 'Tarjeta roja'].includes(eventType)) {
-                    if (!playerName || !playerNumber) {
-                        showMessage("Error", "Por favor, ingresa el nombre y el dorsal del jugador.");
-                        return;
-                    }
-                    eventDescription = `${eventType}: ${playerName} #${playerNumber}`;
-                } else if (['Tiro Libre', 'Penal', 'Travesaño', 'Errado'].includes(eventType)) {
-                    if (!playerName || !playerNumber || !eventTeamSelect.value) {
-                        showMessage("Error", "Por favor, ingresa el nombre, el dorsal y el equipo.");
-                        return;
-                    }
-                    eventDescription = `${eventType} para ${eventTeamSelect.value}: ${playerName} #${playerNumber}`;
-                }
-
-                await updateMatchState(currentLiveMatchId, {}, eventDescription);
-                document.getElementById('event-type').value = '';
-                document.getElementById('event-player-name').value = '';
-                document.getElementById('event-player-number').value = '';
-                document.getElementById('player-event-input-group').style.display = 'none';
-                document.getElementById('event-team-select').style.display = 'none';
             });
-            
-            // Manejador del botón de Finalizar Partido
             document.getElementById('end-match-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db) {
-                    showMessage("Error", "La base de datos no está disponible.");
-                    return;
-                }
-                showConfirmModal('Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
+                if (!currentLiveMatchId || !db) { showMessage("Error", "La base de datos no está disponible."); return; }
+                showModal('confirm', 'Finalizar Partido', '¿Estás seguro de que quieres finalizar este partido? No podrá volver a ser en vivo.', async () => {
                     await updateMatchState(currentLiveMatchId, { isLive: false, isFinished: true }, 'Partido Finalizado');
-                    clearInterval(matchTimerInterval);
-                    timerPausedTime = 0;
-                    currentLiveMatchId = null;
-                    document.getElementById('live-admin-container').style.display = 'none';
                     hideModal('confirm');
+                    hideModal('control');
                 });
             });
 
-            // Manejadores para los nuevos botones de control de tiempo
-            document.getElementById('pause-match-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db || matchSuspended) return;
-                showConfirmModal('Descanso', '¿Estás seguro de que quieres poner el partido en descanso?', async () => {
-                    pauseTimer();
-                    await updateMatchState(currentLiveMatchId, { isPaused: true, isSuspended: false });
-                    document.getElementById('pause-match-btn').style.display = 'none';
-                    document.getElementById('resume-match-btn').style.display = 'block';
-                    hideModal('confirm');
-                });
-            });
-
-            document.getElementById('resume-match-btn').addEventListener('click', async () => {
-                if (!currentLiveMatchId || !db || matchSuspended) return;
-                showSpinner();
-                startTimer(Date.now());
-                await updateMatchState(currentLiveMatchId, { isPaused: false });
-                document.getElementById('pause-match-btn').style.display = 'block';
-                document.getElementById('resume-match-btn').style.display = 'none';
-                hideSpinner();
-            });
-            
-            document.getElementById('suspend-match-btn').addEventListener('click', () => {
-                showModal('suspend');
-            });
-
-            document.getElementById('suspend-confirm-btn').addEventListener('click', async () => {
-                const reason = document.getElementById('suspension-reason').value;
-                if (!reason) {
-                    showMessage('Error', 'Por favor, ingresa una razón para la suspensión.');
-                    return;
-                }
-                if (!currentLiveMatchId || !db) {
-                    showMessage("Error", "La base de datos no está disponible.");
-                    return;
-                }
-                pauseTimer();
-                matchSuspended = true;
-                suspensionReason = reason;
-                await updateMatchState(currentLiveMatchId, { isSuspended: true, suspensionReason: reason });
-                hideModal('suspend');
-            });
-            
-            document.getElementById('suspend-cancel-btn').addEventListener('click', () => {
-                hideModal('suspend');
-            });
-
-
-            // Listeners para los modales
+            // Controladores para los modales
             document.getElementById('modal-close-btn').addEventListener('click', () => hideModal('message'));
             document.getElementById('confirm-cancel-btn').addEventListener('click', () => hideModal('confirm'));
-            document.getElementById('event-modal-close-btn').addEventListener('click', () => hideModal('event'));
-        });
-
-        // Funciones de fetch y onSnapshot
-        function fetchLiveMatches() {
-            const q = query(collection(db, 'matches'), where('isLive', '==', true));
-            onSnapshot(q, (snapshot) => {
-                if (snapshot.docs.length > 0) {
-                    const match = snapshot.docs[0].data();
-                    currentLiveMatchId = snapshot.docs[0].id;
-                    
-                    // Almacenar los datos del partido en el localStorage para acceder a ellos en los eventos
-                    localStorage.setItem('liveMatchData', JSON.stringify(match));
-
-                    renderLiveMatch({ id: currentLiveMatchId, ...match });
-                    
-                    // Iniciar el temporizador si no está suspendido y no está en pausa
-                    if (!match.isSuspended && !match.isPaused && !matchTimerInterval) {
-                        startTimer(match.startTime);
-                    } else if (match.isSuspended) {
-                        if (matchTimerInterval) clearInterval(matchTimerInterval);
-                        document.getElementById('match-timer').textContent = 'SUSPENDIDO';
-                        document.getElementById('pause-match-btn').style.display = 'none';
-                        document.getElementById('resume-match-btn').style.display = 'none';
-                    }
-                    
-                    if (user && user.uid === 'admin_id_here') {
-                        document.getElementById('live-admin-container').style.display = 'block';
-                    }
-                } else {
-                    currentLiveMatchId = null;
-                    if (matchTimerInterval) clearInterval(matchTimerInterval);
-                    document.getElementById('live-matches-container').innerHTML = `<p style="text-align: center; color: rgba(0, 0, 0, 0.5);">No hay partidos en vivo actualmente.</p>`;
-                    document.getElementById('live-admin-container').style.display = 'none';
-                }
-            });
-        }
-
-        function fetchUpcomingMatches() {
-            let q;
-            if (activeTab === 'Fechas') {
-                q = query(collection(db, 'matches'), where('isLive', '==', false), where('isFinished', '==', false));
-            } else if (activeTab === 'Torneos') {
-                q = query(collection(db, 'matches'), where('isLive', '==', false), where('isFinished', '==', false), where('league', '==', 'Torneos'));
-            } else if (activeTab === 'Copa Juvenil') {
-                q = query(collection(db, 'matches'), where('isLive', '==', false), where('isFinished', '==', false), where('league', '==', 'Copa Juvenil'));
-            }
-            onSnapshot(q, (snapshot) => {
-                const matches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderUpcomingMatches(matches);
-            });
-        }
-        
-        function fetchFinishedMatches() {
-            const q = query(collection(db, 'matches'), where('isFinished', '==', true));
-            onSnapshot(q, (snapshot) => {
-                const matches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderFinishedMatches(matches);
-            });
-        }
-
-        // Observador de estado de autenticación (NO TOCAR)
-        onAuthStateChanged(auth, (authUser) => {
-            if (authUser) {
-                user = authUser;
-                fetchLiveMatches();
-                fetchUpcomingMatches();
-                fetchFinishedMatches();
-            } else {
-                signInAnonymously(auth).then(cred => {
-                    user = cred.user;
-                    fetchLiveMatches();
-                    fetchUpcomingMatches();
-                    fetchFinishedMatches();
-                }).catch(error => {
-                    console.error("Authentication Error:", error);
-                    showMessage('Error de Autenticación', 'No se pudo conectar. Por favor, recarga la página.');
-                });
-            }
+            document.getElementById('control-close-btn').addEventListener('click', () => hideModal('control'));
         });
     </script>
 </body>
