@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Oficial B17</title>
+    <title>App Oficial B17 - Full Actualizado (Con funciones añadidas)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1013,19 +1013,22 @@
                             <div class="match-time">Tiempo: <span class="live-time">${match.time || '00:00'}</span></div>
                             <div class="match-date"><i class="fas fa-clock"></i> <span>${new Date(match.date).toLocaleString()}</span></div>
                         </div>
-                        <div class="admin-actions
-                        <div class="events-live-container" id="live-events-\${match.id}">
+
+                        <!-- Contenedor de eventos en vivo debajo del partido: Equipo1 izquierda, Equipo2 derecha -->
+                        <div class="events-live-container" id="live-events-${match.id}">
                             <div class="teams-grid">
                                 <div>
-                                    <h4>\${match.team1.name}</h4>
-                                    <div id="live-events-team1-\${match.id}" class="team-events"></div>
+                                    <h4>${match.team1.name}</h4>
+                                    <div id="live-events-team1-${match.id}" class="team-events"></div>
                                 </div>
                                 <div>
-                                    <h4>\${match.team2.name}</h4>
-                                    <div id="live-events-team2-\${match.id}" class="team-events"></div>
+                                    <h4>${match.team2.name}</h4>
+                                    <div id="live-events-team2-${match.id}" class="team-events"></div>
                                 </div>
                             </div>
-                        </div>" style="display:${isAdmin ? 'flex' : 'none'}; justify-content:center; gap:10px;">
+                        </div>
+
+                        <div class="admin-actions" style="display:${isAdmin ? 'flex' : 'none'}; justify-content:center; gap:10px;">
                             <button class="btn activate-btn" data-match-id="${match.id}">Activar</button>
                             <button class="btn red finalize-btn" data-match-id="${match.id}">Finalizar</button>
                             <button class="btn" data-match-id="${match.id}" style="display:none;">Control</button>
@@ -1083,8 +1086,7 @@
                         <div class="match-details">
                             <div class="date"><i class="fas fa-calendar"></i> ${new Date(match.date).toLocaleString()}</div>
                             <div style="display:flex; gap:8px;">
-                                <button class="btn activate-upcoming-btn" data-match-id="${match.id}">Activar Partido</button>
-                                <button class="btn red delete-upcoming-btn" data-match-id="${match.id}">Eliminar</button>
+                                ${isAdmin ? `<button class="btn activate-upcoming-btn" data-match-id="${match.id}">Activar Partido</button><button class="btn red delete-upcoming-btn" data-match-id="${match.id}">Eliminar</button>` : ''}
                             </div>
                         </div>
                     `;
@@ -1122,7 +1124,7 @@
                             <div>${new Date(match.date).toLocaleString()}</div>
                         </div>
                         <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
-                            <button class="btn delete-finished-btn red" data-match-id="${match.id}">Eliminar</button>
+                            ${isAdmin ? `<button class="btn delete-finished-btn red" data-match-id="${match.id}">Eliminar</button>` : ''}
                         </div>
                     `;
                     finishedMatchesContainer.appendChild(el);
@@ -1266,6 +1268,10 @@
 
                     // Mostrar modal control
                     document.getElementById('match-control-modal').style.display = 'flex';
+                    // Mostrar/ocultar controles administrativos según permisos
+                    const adminControlsEl = document.querySelector('#match-control-modal .admin-controls');
+                    if (adminControlsEl) adminControlsEl.style.display = (isAdmin ? 'flex' : 'none');
+
 
                     // Listener en realtime del doc para actualizar score y estado (timer incluido)
                     onSnapshot(matchRef, (d) => {
@@ -1665,4 +1671,3 @@
     </script>
 </body>
 </html>
-
