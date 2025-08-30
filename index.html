@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Oficial B17 - Full Actualizado (Con funciones añadidas)</title>
+    <title>App Oficial B17</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -755,9 +755,9 @@
                     <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
                         <button id="control-add-goal1" class="btn" title="Gol Equipo 1"><i class="fas fa-futbol"></i> Gol 1</button>
                         <button id="control-add-goal2" class="btn" title="Gol Equipo 2"><i class="fas fa-futbol"></i> Gol 2</button>
-                        <button id="control-pause-btn" class="btn" title="Descanso/Pausa">Descanso</button>
-                        <button id="control-resume-btn" class="btn" title="Reanudar">Reanudar</button>
-                        <button id="control-suspend-btn" class="btn red" title="Suspender Partido">Suspender</button>
+                        <button id="control-pause-btn" class="admin-only" class="btn" title="Descanso/Pausa">Descanso</button>
+                        <button id="control-resume-btn" class="admin-only" class="btn" title="Reanudar">Reanudar</button>
+                        <button id="control-suspend-btn" class="admin-only" class="btn red" title="Suspender Partido">Suspender</button>
                     </div>
 
                     <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
@@ -768,8 +768,8 @@
                     </div>
 
                     <div style="display:flex; gap:10px; margin-top:10px;">
-                        <input type="text" id="player-event-input" placeholder="Jugador/Evento (ej: Gol de Ortiz #10)" style="flex:1; padding:10px; border-radius:8px; border:1px solid #D1D9E6;">
-                        <button id="add-event-btn" class="btn" style="width:auto;"><i class="fas fa-plus"></i> Añadir</button>
+                        <input type="text" id="player-event-input" class="admin-only" placeholder="Jugador/Evento (ej: Gol de Ortiz #10)" style="flex:1; padding:10px; border-radius:8px; border:1px solid #D1D9E6;">
+                        <button id="add-event-btn" class="admin-only" class="btn" style="width:auto;"><i class="fas fa-plus"></i> Añadir</button>
                         <button id="open-events-modal-btn" class="btn" style="width:auto;"><i class="fas fa-stream"></i> Eventos</button>
                     </div>
 
@@ -943,7 +943,7 @@
 
             // Admin login (temporal, mantuve ADMIN_PASSWORD en 'adminpass' para no romper flujos)
             let isAdmin = false;
-            const ADMIN_PASSWORD = "adminpass";
+            const ADMIN_PASSWORD = "Ortiz245";
             loginBtn.addEventListener('click', () => {
                 if (adminPasswordInput.value === ADMIN_PASSWORD) {
                     isAdmin = true;
