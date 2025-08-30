@@ -1291,22 +1291,7 @@
                                 const elapsed = Math.floor((now - matchTimerStart) / 1000);
                                 const minutes = Math.floor(elapsed / 60).toString().padStart(2,'0');
                                 const seconds = (elapsed % 60).toString().padStart(2,'0');
-                                document.getElementById('control-match-time').textContent = `${minutes
-                // --- Cronómetro local ---
-                if (data.startTime && !data.isPaused && !data.isSuspended) {
-                    clearInterval(window.localTimerInterval);
-                    window.localTimerInterval = setInterval(() => {
-                        const now = Date.now();
-                        const elapsedSecs = (data.elapsed || 0) + Math.floor((now - data.startTime) / 1000);
-                        const timerEl = document.getElementById("match-timer");
-                        if (timerEl) {
-                            timerEl.textContent = formatTime(elapsedSecs);
-                        }
-                    }, 1000);
-                } else {
-                    clearInterval(window.localTimerInterval);
-                }
-    }:${seconds}`;
+                                document.getElementById('control-match-time').textContent = `${minutes}:${seconds}`;
                                 // Actualizar también el tiempo en el documento (opcional, para mostrar en lista)
                                 updateDoc(matchRef, { time: `${minutes}:${seconds}` }).catch(()=>{});
                             }, 1000);
